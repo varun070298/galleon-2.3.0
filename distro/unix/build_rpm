@@ -1,0 +1,44 @@
+#!/bin/sh
+OLD_VER=`grep Version: javaHMO.spec | sed -e "s/Version: //"`
+read -p "Enter Primary Version Number [$OLD_VER]: " VERSION
+if [ "$VERSION" == "" ] ; then
+   VERSION=$OLD_VER;
+fi
+
+typeset -i OLD_RELEASE=`grep Release: javaHMO.spec | sed -e "s/Release: //"`
+OLD_RELEASE=$OLD_RELEASE+1
+read -p "Build Number [$OLD_RELEASE]: " RELEASE
+if [ "$RELEASE" == "" ] ; then
+   RELEASE=$OLD_RELEASE
+fi
+
+read -p "Enter Change Description: " CHANGES
+read CHANGES_2
+while [ "$CHANGES_2" != "" ] ; do
+    CHANGES=$CHANGES"\n-- "$CHANGES_2
+    read CHANGES_2
+done
+
+SOURCEDIR=/usr/src/redhat/SOURCES
+ZIPFILE=$SOURCEDIR/javaHMO-$VERSION.src.zip
+
+if [ -f "$ZIPFILE" ] ; then
+   if ![ -d "$SOURCEDIR/history" ] ; then
+      mkdir $SOURCEDIR/history
+   fi
+   mv $ZIPFILE $SOURCEDIR/history
+fi
+
+DIR=`pwd`
+cd ../..
+find bin/ conf/ doc/ src/ images/ lib/ build.xml unix.properties copying Readme.txt ReleaseNotes.txt ThirdPartyLicenses.txt| grep -v CVS | zip $ZIPFILE -\@
+cd $DIR
+
+CHANGELOG="\n* "`date +%a\ %b\ %d\ %Y`" Jon Stroud <accounts@bsclimbing.com>"
+CHANGELOG=$CHANGELOG"\n-- "$CHANGES
+sed -e "s/Version: .*/Version: $VERSION/" -e "s/Release: .*/Release: $RELEASE/" -e "s/%changelog/%changelog$CHANGELOG\n/" javaHMO.spec > javaHMO.spec.tmp
+mv -f javaHMO.spec.tmp javaHMO.spec
+
+rpmbuild -ba javaHMO.spec
+
+cp /usr/src/redhat/RPMS/i386/javaHMO-$VERSION-$RELEASE.i386.rpm /usr/src/redhat/SRPMS/javaHMO-$VERSION-$RELEASE.src.rpm /home/httpd/elijahstroud.com/downloads/

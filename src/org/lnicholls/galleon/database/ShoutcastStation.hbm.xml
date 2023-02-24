@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+	"-//Hibernate/Hibernate Mapping DTD 2.0//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
+
+<hibernate-mapping>
+
+  <class name="org.lnicholls.galleon.database.ShoutcastStation" table="SHOUTCAST_STATION" schema="GALLEON">
+    <meta attribute="class-description">
+Auto-generated using Hibernate hbm2java tool.
+
+Copyright (C) 2005, 2006 Leon Nicholls
+
+This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later
+version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with this program; if not, write to the Free
+Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+See the file "COPYING" for more details.
+    </meta>
+
+  <meta attribute="class-code">
+    public boolean equals(Object object)
+    {
+        ShoutcastStation shoutcastStation = (ShoutcastStation)object;
+        if (url!=null &amp;&amp; shoutcastStation.url!=null)
+	        return url.equals(shoutcastStation.url);
+		else
+			return false;
+    }
+
+    public String getStatusString() {
+        switch (status) {
+        case 1:
+            return "Pending";
+        case 2:
+            return "Downloaded";
+        case 4:
+            return "Refresh";
+        case 8:
+            return "Error";
+        }
+        return "Pending";
+    }
+
+    public static int STATUS_PENDING = 1;
+
+    public static int STATUS_DOWNLOADED = 2;
+
+    public static int STATUS_REFRESH = 4;
+
+    public static int STATUS_ERROR = 8;
+
+  </meta>
+
+    <!--cache usage="read-write"/-->
+
+    <id name="id" type="int" column="ID">
+      <meta attribute="scope-set">protected</meta>
+      <generator class="native"/>
+    </id>
+
+    <property name="genre" type="string" not-null="true">
+      <column name="genre" index="SHOUTCAST_GENRE"  length="30"/>
+    </property>
+
+    <property name="url" type="string" not-null="true" length="1024">
+      <column name="url" index="SHOUTCAST_URL"/>
+    </property>
+
+    <property name="popularity" type="int" not-null="true"/>
+
+    <property name="status" type="int" not-null="true"/>
+
+  </class>
+
+</hibernate-mapping>

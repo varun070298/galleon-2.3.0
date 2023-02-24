@@ -1,0 +1,886 @@
+Galleon
+-------
+
+
+Version 2.3.0:
+----------------------
+Native version for Windows for memory issues
+Resync ToGo video files if moved
+Fixed ToGo stats doubling
+Fix GoBack subfolders
+Fixed ToGo sorting by TiVo name in GUI
+Fix movie posters
+Fixed upcoming dates
+
+
+Version 2.2.0:
+----------------------
+
+Galleon menu sorting
+Internet app support for larger images
+TiVo space available in configuration GUI
+ToGo recordings show TiVo name in configuration GUI
+Added TiVo criteria to ToGo rules
+Improved database error handling
+ToGo sorting
+Jabber app
+Fixed iTunes date support
+Shoutcast configurable download limits
+
+
+Version 2.1.0:
+
+----------------------
+
+Shoutcast app now supports all stations
+
+Shoutcast app supports station alternates
+
+Shoutcast favorites
+
+ToGo downloaded recordings can now be downloaded repeatedly
+
+Added sorting to internet, RSS apps
+
+Jukebox random play
+
+Support parental controls for ToGo downloads
+
+Fixed Galleon menu duplicate app name bug
+
+Fixed network interface binding bug
+
+Fixed GoBack recording details
+
+Fixed video filename formats
+
+Fixed GoBack videocasting support
+
+
+
+
+
+Version 2.0.1:
+
+----------------------
+
+Fix for app sharing configuration
+
+
+
+
+
+Version 2.0.0:
+
+----------------------
+
+Dowload manager delete option
+
+Support more GoBack video filename formats
+
+Support GoBack folders (need 7.2.1)
+
+Internet app thumbnail lists
+
+Fixed JRE install bug
+
+Added ToGo download rules flag criteria
+
+Support GoBack transfer restarts
+
+Improved error handling
+
+App sharing
+
+Improved startup time
+
+Improved background images
+
+Galleon menu system
+
+ToGo reload controlled by server reload setting
+
+Fixed iTunes import
+
+Updated web site
+
+
+
+
+
+Version 1.9.2:
+
+----------------------
+
+Fix for online radio streams
+
+
+
+
+
+Version 1.9.1:
+
+----------------------
+
+MP3 library fix
+
+Audio organizer performance improvements
+
+
+
+
+
+Version 1.9.0:
+
+----------------------
+
+Added artist name to Jukebox listing
+
+Updated to TiVo HME 1.4 SDK
+
+iTunes app performance improvements
+
+Fixed organizer support for names starting with digits
+
+Added single track selection to Jukebox app
+
+Added traffic app
+
+Improved MP3 tag parsing
+
+Fixed podcasting/videocasting download logic
+
+
+
+
+
+Version 1.8.0:
+
+----------------------
+
+Fixed email sorting
+
+Added movie theater favorites
+
+Fixed remote configuration GUI ToGo bugs
+
+Added music current track shortcut
+
+Fixed RSS text escaping
+
+Fixed RSS configuration bug
+
+Added Jukebox app
+
+Added Upcoming app
+
+Fixed iTunes date bug
+
+
+
+
+
+Version 1.7.0:
+
+----------------------
+
+Fixed multiple network interfaces bug
+
+Increased ToGo date width
+
+Added download limit for email accounts
+
+Improved download manager error handling
+
+
+
+
+
+Version 1.6.0:
+
+----------------------
+
+Fixed timeout saving bug
+
+Added configuration options to apps
+
+Fixed ToGo padding bug
+
+Changed slideshow music selection to 1 key
+
+Added 0 key for info
+
+Fixed multiple network interfaces bug
+
+Fixed shoutcast genre removal
+
+Fixed GoBack end bug
+
+Fixed ToGo for deleted files
+
+Fixed ToGo total hours 
+
+Upgraded to 1.3.1 HME SDK
+
+
+
+
+
+Version 1.5.0:
+
+----------------------
+
+Added videocasting app
+
+Added option to disable TiVo timeouts to live TV
+
+Added option to disable GoBack feature
+
+Fixed podcasting tag parsing
+
+Made GoBack configurable
+
+Added support for multiple GoBack directories
+
+Fixed ToGo details download URL
+
+Fixed GoBack broadcasts
+
+Added internet slideshow app
+
+Added download manager
+
+
+
+
+
+
+
+Version 1.4.1:
+
+----------------------
+
+Fixed ToGoBack bug
+
+Fixed ToGo connection bug
+
+
+
+
+
+Version 1.4.0:
+
+----------------------
+
+Fixed ToGo channel support
+
+Fixed timeout bug
+
+Support paging between weather screens
+
+Support TiVo ToGo Back
+
+Fixed fast forward, rewind bugs
+
+Fixed dymamic icons
+
+Fixed movie app bugs
+
+
+
+
+
+Version 1.3.0:
+
+----------------------
+
+Fixed ToGo delete bug
+
+Fixed photos slideshow music to support subdirectories
+
+Fixed iTunes playlist delete operations
+
+Added label to internet app images
+
+ToGo performance improvements
+
+Fixed iTunes ratings import
+
+Fixed iTunes import mechanism
+
+Improved podcasting app performance
+
+HME SDK 1.3 beta
+
+Handle TiVo timeouts
+
+Music fast forward, rewind, advance support
+
+
+
+
+
+Version 1.2.0:
+
+----------------------
+
+Fixed iTunes reload logic
+
+Support adding podcast subscription feeds
+
+Error message for email server problems
+
+Added support for iTunes RSS tags in podcast app
+
+Fixed ToGo rules criteria text
+
+Added paging to RSS and email screens
+
+Fixed organizer
+
+Support random play of folders in photos app
+
+Support music controls during photo slideshow (up/down keys)
+
+Fixed random play
+
+Automatic version checking
+
+Support more MP3 file formats
+
+
+
+
+
+Version 1.1.0:
+
+----------------------
+
+Made screensaver configurable.
+
+Added new skin with TiVo look-and-feel.
+
+Improved default port logic.
+
+Support more image formats: jpg, png, gif, bmp, wbmp
+
+Added play to top-level music, iTunes, photo, organizer menus.
+
+Fixed app removal.
+
+Movies app.
+
+Fix web images update bug.
+
+
+
+
+
+Version 1.0.0:
+
+----------------------
+
+Fixed playlist app play bug.
+
+Changed screensaver.
+
+
+
+
+
+Version 0.0.0 beta 13:
+
+----------------------
+
+Fixed music sorting.
+
+Fixed .pls playlist streaming support.
+
+Removed upgrade to JmDNS.
+
+Fixed playlist play.
+
+Improved podcasting support for invalid MP3 tags.
+
+
+
+
+
+Version 0.0.0 beta 12:
+
+----------------------
+
+Upgraded to JmDNS 1.0 RC2
+
+Fixed some data bugs in various apps.
+
+Updated project web pages.
+
+Fixed album cover image bug.
+
+Support playlists with relative path tracks.
+
+
+
+
+
+Version 0.0.0 beta 11:
+
+----------------------
+
+Fixed email sorting.
+
+Removed camera app.
+
+Fixed memory leak that could cause TiVo reboots.
+
+Added podcasting app.
+
+
+
+
+
+Version 0.0.0 beta 10:
+
+----------------------
+
+Fixed email app.
+
+Reset field values for table operations in configuration GUI.
+
+Fixed music update title bug.
+
+Fixed bug that caused beep sounds in GUI.
+
+
+
+
+
+Version 0.0.0 beta 9:
+
+---------------------
+
+Fixed safe viewing area option.
+
+Windows installation wizard.
+
+Desktop app.
+
+Improved support for online radio stations.
+
+Auto restarts for server configuration changes.
+
+Increased size of text caching.
+
+Camera app.
+
+Email app.
+
+Playlists app.
+
+Internet images app.
+
+Random play for music folders.
+
+New music play bar.
+
+Support HME 1.2.0
+
+Support Bananas 1.2.1
+
+View photo option in photo app.
+
+Rotate photo option in photo app.
+
+iTunes app.
+
+Moved artist web images to music player screen.
+
+
+
+
+
+Version 0.0.0 beta 8:
+
+---------------------
+
+Added option to control safe viewing area for slideshows.
+
+RSS reader.
+
+Music organizer.
+
+Fixed Shoutcast caching bugs.
+
+Added optional HMO-like music player.
+
+
+
+
+
+Version 0.0.0 beta 7:
+
+---------------------
+
+Added skinning support for images.
+
+Added CLEAR button to exit any app.
+
+Support streaming MP3 stations.
+
+Support displaying streaming meta tags.
+
+Shoutcast app.
+
+Music player settings moved to its own menu item in configuration GUI.
+
+Improved playlist parsing performance.
+
+
+
+
+
+Version 0.0.0 beta 6:
+
+---------------------
+
+Fixed ToGo database startup error.
+
+Music lyrics.
+
+Support dotted directory names.
+
+Went back to 1.4 JDK.
+
+Artist web images.
+
+Removed Winamp player as standalone app (now part of Music app code).
+
+Added HME directory for non-Galleon HME apps.
+
+Made ToGo a configurable app.
+
+Network interface test wizard.
+
+Support playing folders.
+
+Support M3U and PLS playlists (no streaming stations yet).
+
+
+
+
+
+Version 0.0.0 beta 5:
+
+---------------------
+
+Optimized ToGo app to be less resource intensive.
+
+Fixed Windows shortcut names.
+
+Photo thumbnail widget.
+
+Made multicast DNS network interface and port configurable.
+
+Automatically detect TiVos.
+
+Fixed ToGo total time.
+
+
+
+
+
+Version 0.0.0 beta 4:
+
+---------------------
+
+Support multiple instances of the same app.
+
+Fixed bug that incorrectly uniquely identified ToGo recordings.
+
+Right button to exit apps.
+
+Made album art configurable.
+
+Music ratings.
+
+Scrolling text widget for weather alerts.
+
+Photos app (only JPEGs currently supported)
+
+Configurable photo slideshow effects.
+
+Music while viewing slideshow.
+
+
+
+
+
+Version 0.0.0 beta 3:
+
+---------------------
+
+ToGo bug fixes.
+
+ToGo statistics.
+
+Music app.
+
+Fixed class loading bug for paths with spaces.
+
+Added ToGo rules configuration to main configuration file.
+
+Changed weather app to use arrow keys instead of menu.
+
+Album art.
+
+Music player screensaver (kicks in after 5 mins).
+
+
+
+
+
+Version 0.0.0 beta 2:
+
+---------------------
+
+ToGo bug fixes.
+
+ToGo download status bar and download speed.
+
+Weather app.
+
+
+
+
+
+Version 0.0.0 beta 1:
+
+---------------------
+
+Your TiVo needs to be running version 7.1 software.
+
+
+
+
+
+
+
+
+
+Known issues:
+
+1. The server needs to be running for the configuration GUI to work.
+
+2. Most JavaHMO plugins have been ported to Galleon.
+
+3. HME apps are deployed in the Galleon hme directory. 
+
+4. Galleon requires the 1.4 JRE, but the 1.5 JRE is highly recommended.
+
+5. Weather errors arent handled properly.
+
+6. Weather web links need parameters.
+
+8. Weather currently only uses zip.
+
+9. When you start Galleon, it might take some time before the ToGo list is populated.
+
+10. Music player generates resource not found errors.
+
+11. Port 1099 required for GUI to update the server.
+
+12. Thumbnail grid can cause "view not found" errors when you move quickly between screens.
+
+13. Port 7288 required for accessing the apps from your TiVo.
+
+14. Only one weather app at a time is supported.
+
+15. Port 1527 needed for database.
+
+16. Depending on the bitrate of the original stream and of the options chosen, transcoding can be a very CPU intensive task.
+
+17. If you have a mix of videos and folders and you browse into a folder while on the info screen for a video, your Tivo recorder might reboot.
+
+
+
+
+
+
+
+How to install Galleon:
+
+Run the Windows installation wizard. Except the default settings. After
+
+the wizard has completed, run the configuration GUI. Use the
+
+File/Properties menu to configure the Galleon server. Use the File/New
+
+App to add the applications.
+
+
+
+
+
+How to start Galleon manually from the command line:
+
+1. Run the Galleon server by using the run.cmd script in the bin directory. Wait until you see a message about the ToGo app being registered. 
+
+2. Run the Galleon configuration GUI using the gui.cmd script in the bin directory.
+
+2. Configure the ToGo recordings path and media access key using the File/Properties menu.
+
+3. Use the File/ToGo menu to add your TiVo IP address. (Ignore any warning messages)
+
+4. Add the capacity of each TiVos in GB.
+
+5. Click on the recordings tab and wait for the GUI to download the list of recordings.
+
+6. Add applications by using the File/New App menu.
+
+7. For each app you add, you must press the Apply button to save each app's settings.
+
+8. Exit from the GUI.
+
+9. Use your TiVo to pick ToGo recordings to download to your PC.
+
+10. Use left arrow or CLEAR to exit any app.
+
+
+
+
+
+How to play music with slideshow:
+
+1. Configure Music app and configure Photos app.
+
+2. Use your Tivo to browse to a music directory.
+
+3. Press the 1 button.
+
+4. Browse into a directory in the Photos app.
+
+5. When slideshow starts, press Play.
+
+
+
+
+
+Winamp skins:
+
+The project has permission from the author of the Metrix Winamp classic skins (Sven Kistner) to distribute the skins with the Galleon project:
+
+http://www.winamp.com/skins/browse.php?search=yes&filter=S&query=metrix
+
+However, for copyright reasons, the skins are not checked into the project CVS. The Galleon build script will add any *.wsz Winamp skin files
+
+that are in the media/winamp directory to a package build. The Galleon GUI will detect any *.wsz files that are in the media/winamp directory and will 
+
+allow the user to pick a skin in the music app configuration screen.
+
+
+
+Download your favorite Winamp Classic skin from: http://www.winamp.com/skins
+
+The following skin is recommended: http://www.winamp.com/skins/details.php?id=35567
+
+
+
+(If you have Winamp installed, then don't click on the Download button on
+
+the Winamp page; rather use the right-click menu to do a Save As of the
+
+file)
+
+
+
+
+
+Music Player:
+
+Basic operations such as Play, Pause, Next, Previous and Stop are supported in this version:
+
+Play = Play
+
+Pause = Pause
+
+Slow = Stop
+
+Channel Up = Next
+
+Channel Down = Previous
+
+
+
+
+
+Running other HME apps:
+
+1. Copy the jar file of the app into the Galleon HME directory.
+
+2. Add an entry for the new app in the launcher.txt file.
+
+
+
+
+
+How to configure Galleon on a headless system:
+
+1. It is possible to remotely configure Galleon. Simply append the IP address of the PC running Galleon to the command to launch the configuration GUI.
+
+
+
+
+
+How to create your own skin:
+
+The easy way:
+
+1. Unzip the default skin located in the skins directory, galleon.gln.
+
+2. Modify the images.
+
+3. Zip the files (including the existing skin.xml file) and rename to *.gln.
+
+4. Put the skin file in the skins directory.
+
+5. Use the configuration GUI File/Properties menu to change the selected skin.
+
+The harder way:
+
+1. Unzip the default skin, galleon.gln.
+
+2. Modify the skin.xml file (it is self-documented).
+
+3. Zip the files (including the new skin.xml file) and rename to *.gln.
+
+4. Put the skin file in the skins directory.
+
+5. Use the configuration GUI File/Properties menu to change the selected skin.
+
+
+
+
+
+Demo mode:
+
+Galleon can run in a demo mode if the following parameter is added to
+
+the startup command: -Ddemo=true
+
+While running in demo mode, the user will not be allowed to make and
+
+configuration changes.
+
+
+
+
+
+
+
+=====================================================
+
+galleon.tv
+
+javahmo@users.sourceforge.net
+

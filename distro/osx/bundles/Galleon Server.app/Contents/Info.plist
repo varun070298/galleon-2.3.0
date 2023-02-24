@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleAllowMixedLocalizations</key>
+	<string>true</string>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>JavaApplicationStub</string>
+	<key>CFBundleGetInfoString</key>
+	<string>Galleon 1.6.0</string>
+	<key>CFBundleIconFile</key>
+	<string>Galleon.icns</string>
+	<key>CFBundleIdentifier</key>
+	<string>org.lnicholls.galleon</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>Galleon Server</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.6.0</string>
+	<key>CFBundleSignature</key>
+	<string>GLON</string>
+	<key>CFBundleVersion</key>
+	<string>1.6.0</string>
+	<key>Java</key>
+	<dict>
+		<key>ClassPath</key>
+		<array>
+			<string>$JAVAROOT/conf</string>
+			<string>$JAVAROOT/lib/dom4j.jar</string>
+			<string>$JAVAROOT/lib/derby.jar</string>
+			<string>$JAVAROOT/lib/concurrent.jar</string>
+			<string>$JAVAROOT/lib/commons.jar</string>
+			<string>$JAVAROOT/lib/browserlauncher.jar</string>
+			<string>$JAVAROOT/lib/bananas.jar</string>
+			<string>$JAVAROOT/lib/activation.jar</string>
+			<string>$JAVAROOT/lib/yahoo_search.jar</string>
+			<string>$JAVAROOT/lib/xml-apis.jar</string>
+			<string>$JAVAROOT/lib/xercesImpl.jar</string>
+			<string>$JAVAROOT/lib/xbean.jar</string>
+			<string>$JAVAROOT/lib/wrapper.jar</string>
+			<string>$JAVAROOT/lib/widgets.jar</string>
+			<string>$JAVAROOT/lib/pja.jar</string>
+			<string>$JAVAROOT/lib/mp3dings.jar</string>
+			<string>$JAVAROOT/lib/MHS.jar</string>
+			<string>$JAVAROOT/lib/mediamanager.jar</string>
+			<string>$JAVAROOT/lib/mail.jar</string>
+			<string>$JAVAROOT/lib/javazoom.jar</string>
+			<string>$JAVAROOT/lib/jampal.jar</string>
+			<string>$JAVAROOT/lib/informa.jar</string>
+			<string>$JAVAROOT/lib/htmlparser.jar</string>
+			<string>$JAVAROOT/lib/hme.jar</string>
+			<string>$JAVAROOT/lib/hme-host-sample.jar</string>
+			<string>$JAVAROOT/lib/hibernate.jar</string>
+			<string>$JAVAROOT/lib/galleon.jar</string>
+			<string>$JAVAROOT/lib/forms.jar</string>
+			<string>$JAVAROOT/lib/jdai.jar</string>
+			<string>$JAVAROOT/lib/jax.jar</string>
+			<string>$JAVAROOT/lib/jawin.jar</string>
+			<string>$JAVAROOT/lib/log4j.jar</string>
+			<string>$JAVAROOT/lib/jshortcut.jar</string>
+			<string>$JAVAROOT/lib/js.jar</string>
+			<string>$JAVAROOT/lib/jdom.jar</string>
+			<string>$JAVAROOT/lib/upcoming.jar</string>
+		</array>
+		<key>JVMVersion</key>
+		<string>1.4*</string>
+		<key>MainClass</key>
+		<string>org.lnicholls.galleon.server.Server</string>
+		<key>Properties</key>
+		<dict>
+			<key>java.awt.fonts</key>
+			<string>/Library/Java/Home/lib/fonts</string>
+		</dict>
+		<key>VMOptions</key>
+		<string>-server -Xms64m -Xmx64m</string>
+		<key>WorkingDirectory</key>
+		<string>$APP_PACKAGE/Contents/Resources/Java/bin</string>
+	</dict>
+</dict>
+</plist>

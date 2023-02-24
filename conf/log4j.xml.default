@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" debug="false">
+
+	<appender name="AsyncTrace" class="org.apache.log4j.AsyncAppender">
+    <appender-ref ref="TraceFile"/>
+		<!--appender-ref ref="CONSOLE"/-->
+	</appender>
+	
+	<appender name="GuiTrace" class="org.apache.log4j.AsyncAppender">
+    <appender-ref ref="GuiFile"/>
+		<!--appender-ref ref="CONSOLE"/-->
+	</appender>	
+
+	<appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+  		     <param name="ConversionPattern" value="%d{ABSOLUTE} %5p [%t] %c{1} - %m%n"/>
+		</layout>
+	</appender>
+
+	<appender name="TraceFile" class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="@logs@/log.txt"/>
+		<param name="Threshold" value="DEBUG"/>
+		<param name="MaxFileSize" value="3000KB"/>
+		<param name="MaxBackupIndex" value="3"/>
+		<layout class="org.apache.log4j.PatternLayout">
+  		     <param name="ConversionPattern" value="%d{ABSOLUTE} %5p [%t] %c{1} - %m%n"/>
+		</layout>
+	</appender>
+	
+	<appender name="GuiFile" class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="@logs@/gui.txt"/>
+		<param name="Threshold" value="DEBUG"/>
+		<param name="MaxFileSize" value="1000KB"/>
+		<param name="MaxBackupIndex" value="3"/>
+		<layout class="org.apache.log4j.PatternLayout">
+  		     <param name="ConversionPattern" value="%d %5p [%t] %c{1} - %m%n"/>
+		</layout>
+	</appender>	
+	
+	<logger name="org.apache.commons" additivity="false">
+		<level value="OFF"/>
+		<appender-ref ref="AsyncTrace"/>
+	</logger>
+	
+	<logger name="de.nava.informa" additivity="false">
+		<level value="OFF"/>
+		<appender-ref ref="AsyncTrace"/>
+	</logger>
+	
+	<logger name="net.sf.hibernate" additivity="false">
+		<level value="INFO"/>
+		<appender-ref ref="AsyncTrace"/>
+	</logger>	
+	
+	<logger name="net.sf.hibernate.type" additivity="false">
+		<level value="OFF"/>
+		<appender-ref ref="AsyncTrace"/>
+	</logger>		
+	
+	<logger name="net.sf.hibernate.tool.hbm2ddl" additivity="false">
+		<level value="OFF"/>
+		<appender-ref ref="AsyncTrace"/>
+	</logger>			
+	
+	<logger name="org.apache.commons.digester.Digester" additivity="false">
+		<level value="OFF"/>
+		<appender-ref ref="AsyncTrace"/>
+	</logger>			  
+
+	<logger name="org.apache.commons.digester.Digester.sax" additivity="false">
+		<level value="OFF"/>
+		<appender-ref ref="AsyncTrace"/>
+	</logger>			  	
+	
+	<logger name="org.lnicholls.galleon.gui" additivity="false">
+		<level value="INFO"/>
+		<appender-ref ref="GuiTrace"/>
+	</logger>	
+	
+	<logger name="org.lnicholls.galleon" additivity="false">
+		<level value="INFO"/>
+		<appender-ref ref="AsyncTrace"/>
+	</logger>	
+
+	<root>
+		<priority value="info"/>
+		<appender-ref ref="AsyncTrace"/>
+	</root>
+</log4j:configuration>
+

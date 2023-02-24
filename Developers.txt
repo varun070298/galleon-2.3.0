@@ -1,0 +1,87 @@
+Notes for Galleon Developers
+============================
+
+After sending an email request to become a Galleon developer to
+javahmo@users.sourceforge.net, you will also be added to two mailing lists:
+galleon-developers@lists.sourceforge.net: used for developer issues,
+galleon-commits@lists.sourceforge.net: used by CVS to automatically post all checkins.
+Both these mailing lists are archived on the project development page.
+
+To help us keep track of who is doing what, we use the project bug and feature trackers. 
+If you want to fix a particular bug or implement a feature, assign it to yourself. If there 
+are any new features you want to work on, go ahead and add new features to the tracker. 
+If you decide to do any significant development changes to JavaHMO it is recommended that 
+you use the mailing list to get feedback first.
+
+I suggest that you read through the developer documentation provided by Sourceforge. 
+Everything you will need to know to use CVS and the project tools are explained in detail.
+
+
+Building
+--------
+Galleon uses JDK 1.4
+Galleon also uses the JMF:
+http://java.sun.com/products/java-media/jmf/2.1.1/download.html
+The JMF sound.jar and jmf.jar files need to be copied into the Galleon lib directory.
+
+
+Ant build scripts are used to manage the build process (http://ant.apache.org).  
+To compile the galleon.jar file:
+ant compile
+
+To build the Galleon package:
+ant package
+
+To create a source copy:
+ant source
+
+
+Running
+-------
+
+Use the scripts in the bin directory to run the configuration GUI and
+Galleon server.
+
+
+Coding Style
+------------
+The Java code should conform to the Sun Java Coding conventions. 
+
+
+Database
+--------
+Galleon uses Apache Derby (http://db.apache.org/derby/manuals/index.html) as an embedded database. However,
+it can be replaced by any database supported by Hibernate (http://www.hibernate.org/80.html) by changing the conf/hibernate.properties file.
+
+While the Galleon server is running, Derby runs as a network server, meaning that you can connect to it remotely.
+You can use a program such as DBVisualizer (http://www.codework.com/dbvis/product.html) to connect to the Derby database. 
+You can use the embedded driver or a JDBC driver (It is also possible to use ODBC: http://www-106.ibm.com/developerworks/db2/library/techarticle/dm-0409cline2/index.html) 
+
+IBM provides a free JDBC driver:
+http://www-128.ibm.com/developerworks/db2/downloads/jcc/
+
+If you are using DBVisualiser, the driver jar files need to imported using the Tools/Driver Manager menu.
+Use the following database URL to connect to Derby while Galleon is running using the DB2 driver:
+jdbc:derby:net//localhost:1527/galleon
+Use the following database URL to connect to Derby when Galleon is not running (using the path of the Galleon data dir) and using the embedded driver:
+jdbc:derby:d:/galleon/data/galleon
+
+userid: galleon
+password: galleon
+
+GUI
+---
+The GUI communicates with the server using Java RMI which binds to port 1099. This elliminates the proprietary 
+socket connection that JavaHMO used. This will also allow headless systems to remotely configure the server.
+
+
+Weather
+-------
+The Weather.com XML feed is used to obtain the weather data:
+http://registration.weather.com/registration/xmloap/step1
+To comply with the XML feed licence, the configuration GUI will include several links to the Weather.com site.
+
+
+--------------------------------------
+galleon.sourceforge.net
+javahmo@users.sourceforge.net

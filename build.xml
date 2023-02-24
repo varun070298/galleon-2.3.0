@@ -1,0 +1,2731 @@
+<!--
+
+  Ant file to build and deploy all Galleon Java code.
+
+  Usage:  ant [ -find build.xml ] [ -emacs ]
+
+  To remove all compiled class files:  ant [ -find build.xml ] clean
+
+ -->
+
+
+
+<project name="galleon" default="build.library" basedir=".">
+
+
+
+    <path id="class.path">
+
+      <pathelement location="${basedir}/build" />
+
+        <fileset dir="${basedir}/lib" >
+
+          <include name="**/*.jar"/>
+
+        </fileset>
+
+        <pathelement path="${basedir}/conf" />
+
+    </path>
+
+
+
+    <property name="src" value="${basedir}/src" />
+
+    <property name="build" value="${basedir}/build" />
+
+
+
+    <target name="init">
+
+
+
+        <condition property="platform" value="unix">
+
+            <and>
+
+                <os family="unix" />
+
+                <not>
+
+                    <os family="mac" />
+
+                </not>
+
+            </and>
+
+        </condition>
+
+
+
+        <condition property="platform" value="win32">
+
+            <os family="windows" />
+
+        </condition>
+
+
+
+        <condition property="platform" value="osx">
+
+            <os name="Mac OS X" />
+
+        </condition>
+
+
+
+        <property file="${platform}.properties" />
+
+
+
+        <condition property="win32comment" value="">
+
+            <not>
+
+                <isset property="win32comment" />
+
+            </not>
+
+        </condition>
+
+
+
+        <condition property="osxcomment" value="">
+
+            <not>
+
+                <isset property="osxcomment" />
+
+            </not>
+
+        </condition>
+
+
+
+        <condition property="unixcomment" value="">
+
+            <not>
+
+                <isset property="unixcomment" />
+
+            </not>
+
+        </condition>
+
+
+
+        <echo message="Properties" />
+
+        <echo message="---------------------" />
+
+        <echo message="platform    : ${platform}" />
+
+        <echo message="win32comment: ${win32comment}" />
+
+        <echo message="osxcomment  : ${osxcomment}" />
+
+        <echo message="unixcomment : ${unixcomment}" />
+
+        <echo message="root path   : ${root}" />
+
+        <echo message="lib path    : ${lib}" />
+
+        <echo message="bin path    : ${bin}" />
+
+        <echo message="conf path   : ${conf}" />
+
+        <echo message="cache path  : ${cache}" />
+
+        <echo message="headless    : ${headless}" />
+
+        <echo message="galleon log : ${logfile}" />
+
+        <echo message="wrapper log : ${wrapperlog}" />
+
+        <echo message="log path    : ${logs}" />
+
+        <echo message="apps path    : ${apps}" />        
+
+        <echo message="data path    : ${data}" />                
+
+        <echo message="hme path    : ${hme}" />                  
+
+        <echo message="skins path    : ${skins}" />                                
+
+
+
+        <filter token="lib" value="${lib}" />
+
+        <filter token="win32comment" value="${win32comment}" />
+
+        <filter token="osxcomment" value="${osxcomment}" />
+
+        <filter token="unixcomment" value="${unixcomment}" />
+
+        <filter token="root" value="${root}" />
+
+        <filter token="conf" value="${conf}" />
+
+        <filter token="cache" value="${cache}" />
+
+        <filter token="headless" value="${headless}" />
+
+        <filter token="logfile" value="${logfile}" />
+
+        <filter token="wrapperlog" value="${wrapperlog}" />
+
+        <filter token="logs" value="${logs}" />
+
+        <filter token="bin" value="${bin}" />
+
+        <filter token="data" value="${data}" />        
+
+        <filter token="apps" value="${apps}" />        
+
+        <filter token="hme" value="${hme}" />                
+
+        <filter token="skins" value="${skins}" />                
+
+
+
+        <property name="filtering" value="no" />
+
+
+
+    </target>
+
+
+
+    <target name="javadocs">
+
+        <echo>Generating JavaDocs</echo>
+
+        <javadoc packagenames="org.lnicholls.galleon.*" sourcepath="src" destdir="javadocs" author="true" version="true" use="true" windowtitle="Galleon">
+
+
+
+            <classpath>
+
+                <path refid="class.path" />
+
+            </classpath>
+
+
+
+        </javadoc>
+
+    </target>
+
+
+
+    <target name="clean">
+
+        <delete dir="${build}" />
+
+
+
+        <mkdir dir="${build}" />
+
+        <mkdir dir="${build}/lib" />
+
+        <mkdir dir="${build}/logs" />
+
+        <mkdir dir="${build}/bin" />
+
+        <mkdir dir="${build}/conf" />
+
+        <mkdir dir="${build}/media" />
+
+        <mkdir dir="${build}/data" />        
+
+        <mkdir dir="${build}/apps" />        
+
+        <mkdir dir="${build}/skins" />        
+
+        <mkdir dir="${build}/hme" />                
+
+
+
+    </target>
+
+    
+
+  <!-- Teach Ant how to use Hibernate's code generation tool -->
+
+  <taskdef name="hbm2java" classname="net.sf.hibernate.tool.hbm2java.Hbm2JavaTask" classpathref="class.path"/>
+
+
+
+  <!-- Generate the java code for all mapping files in our source tree -->
+
+  <target name="codegen" description="Generate Java source from the O/R mapping files" depends="init,clean">
+
+<!--    <hbm2java output="${basedir}/src" config="${basedir}/conf/codegen.xml"> -->
+
+    <hbm2java output="${basedir}/src">    
+
+      <fileset dir="${basedir}/src">
+
+        <include name="**/*.hbm.xml"/>
+
+        <!--exclude name="**/Playlist.hbm.xml"/-->
+
+      </fileset>
+
+    </hbm2java>
+
+  </target> 
+
+
+
+    <target name="compile" depends="clean, init, codegen">
+
+
+
+        <echo>Compiling Java sources</echo>
+
+
+
+        <javac srcdir="${src}" destdir="${build}" debug="on" optimize="off" deprecation="off" verbose="off" source="1.4" target="1.4">
+
+            <include name="**/*.java" />
+
+            <exclude name="**/apps/camera,**/util/CameraDevice.java" />
+
+            <classpath>
+
+                <path refid="class.path" />
+
+            </classpath>
+
+<!--            
+
+            <compilerarg value="-Xlint:unchecked"/>
+
+            <compilerarg value="-Xlint:deprecation"/>
+
+-->            
+
+        </javac>
+
+        <rmic classname="org.lnicholls.galleon.server.ServerControlImpl" base="${build}" debug="on"/>
+
+    </target>
+
+    
+
+  <!-- Generate the schemas for all mapping files in our class tree -->
+
+  <target name="schema" depends="compile" description="Generate DB schema from the O/R mapping files">
+
+
+
+    <!-- Teach Ant how to use Hibernate's schema generation tool -->
+
+    <taskdef name="schemaexport" classname="org.hibernate.tool.hbm2ddl.SchemaExportTask"
+
+             classpathref="class.path"/>
+
+<!--      
+
+      <schemaexport
+
+        properties="${basedir}/conf/hibernate.properties"
+
+        quiet="no"
+
+        text="no"
+
+        drop="no"
+
+        delimiter=";"
+
+        output="${basedir}/src/schema.sql">
+
+        <fileset dir="${build}">
+
+          <include name="**/*.hbm.xml"/>
+
+        </fileset>
+
+      </schemaexport>
+
+-->    
+
+
+
+    <schemaexport properties="${basedir}/conf/hibernate.properties"
+
+                  quiet="no" text="no" drop="no">
+
+      <fileset dir="${build}">
+
+        <include name="**/*.hbm.xml"/>
+
+      </fileset>
+
+    </schemaexport>      
+
+
+
+  </target>    
+
+  
+
+  
+
+<target name="schemaupdate" depends="compile">
+
+    <taskdef name="schemaupdate"
+
+        classname="org.hibernate.tool.hbm2ddl.SchemaUpdateTask"
+
+        classpathref="class.path"/>
+
+    
+
+    <schemaupdate
+
+        properties="${basedir}/conf/hibernate.properties"
+
+        text="no"        
+
+        quiet="no">
+
+      <fileset dir="${build}">
+
+            <include name="**/*.hbm.xml"/>
+
+        </fileset>
+
+    </schemaupdate>
+
+</target>      
+
+
+
+    <target name="build.library" depends="compile">
+
+    
+
+        <echo>Creating Galleon library</echo>
+
+        <jar jarfile="${build}/lib/galleon.jar" compress="yes"
+
+            basedir="${build}"
+
+            includes="org/**"
+
+            excludes="**/apps/**,**/widget/ScrollText.class,**/widget/Grid.class,**/widget/PlayBar.class">
+
+            <fileset dir="./doc" includes="server.html" />
+
+            <fileset dir="./doc" includes="network.html" />            
+
+            <fileset dir="./doc" includes="togo.html" />            
+
+            <fileset dir="./doc" includes="newapp.html" />            
+
+            <fileset dir="./doc" includes="musicplayer.html" />                        
+
+            <fileset dir="./doc" includes="data.html" />            
+
+            <fileset dir="./doc" includes="goback.html" />                        
+
+            <fileset dir="./doc" includes="downloadmanager.html" />                                    
+
+            <fileset dir="./media/images" includes="galleon.png" />                        
+
+            <fileset dir="./media/images" includes="guiicon.png" />                                    
+
+            <fileset dir="./media/images" includes="guiicon.gif" />                                                
+
+            <fileset dir="./media/images" includes="busy.gif" />                                                            
+
+            <fileset dir="./media/images" includes="busy2.gif" />                                                                        
+
+            <fileset dir="./media/images" includes="star.png" />
+
+            <fileset dir="./media/sounds" includes="couldnotconnect.mp3" />
+
+            <fileset dir="./media/images" includes="yellowball.gif" />
+
+            <fileset dir="./media/images" includes="yellowball!.gif" />
+
+            <fileset dir="./media/images" includes="whiteball.gif" />
+
+            <fileset dir="./media/images" includes="greenball.gif" />
+
+            <fileset dir="./media/images" includes="redball.gif" />
+
+            <fileset dir="./media/images" includes="blueball.gif" />
+
+            <fileset dir="./media/images" includes="empty.gif" />
+
+            <fileset dir="./src" includes="**/*.hbm.xml" />
+
+        </jar>
+
+
+
+
+
+        <echo>Creating Galleon widgets library</echo>
+
+        <copy file="./media/fonts/FreeSans.ttf" tofile="${build}/org/lnicholls/galleon/widget/FreeSans.ttf" />    
+
+        <copy file="./media/images/widget/marker.png" tofile="${build}/org/lnicholls/galleon/widget/marker.png" />            
+
+        <copy file="./media/images/widget/playbar_shuttle_top.png" tofile="${build}/org/lnicholls/galleon/widget/playbar_shuttle_top.png" />                
+
+        <copy file="./media/images/widget/pause.png" tofile="${build}/org/lnicholls/galleon/widget/pause.png" />
+
+        <copy file="./media/images/widget/stop.png" tofile="${build}/org/lnicholls/galleon/widget/stop.png" />        
+
+        <copy file="./media/images/widget/play.png" tofile="${build}/org/lnicholls/galleon/widget/play.png" />        
+
+        <copy file="./media/images/widget/rewind.png" tofile="${build}/org/lnicholls/galleon/widget/rewind.png" />        
+
+        <copy file="./media/images/widget/playbar.png" tofile="${build}/org/lnicholls/galleon/widget/playbar.png" />                
+
+        <copy file="./media/images/widget/playbar_shuttle_bottom.png" tofile="${build}/org/lnicholls/galleon/widget/playbar_shuttle_bottom.png" />
+
+        
+
+
+
+        <jar jarfile="${build}/lib/widgets.jar" compress="yes"
+
+            basedir="${build}"
+
+            includes="**/widget/ScrollText.class,**/widget/Grid.class,**/widget/PlayBar.class,**/widget/FreeSans.ttf,**/widget/*.png">
+
+            <fileset dir="./" includes="Readme.txt" />                        
+
+            <fileset dir="./" includes="copying" />                        
+
+        </jar>        
+
+
+
+        <echo>Creating apps</echo>
+
+        <copy file="./media/images/togo/icon.png" tofile="${build}/org/lnicholls/galleon/apps/togo/icon.png" />        
+
+        <copy file="./doc/togoapp.html" tofile="${build}/org/lnicholls/galleon/apps/togo/help.html" />        
+
+        <manifest file="${build}/MANIFEST.MF">
+
+          <attribute name="Built-By" value="${user.name}"/>
+
+          <attribute name="Main-Class" value="org.lnicholls.galleon.apps.togo.ToGo"/>
+
+          <attribute name="HME-Arguments" value=""/>
+
+          <attribute name="Title" value="ToGo"/>
+
+          <attribute name="ReleaseDate" value="04/03/05"/>          
+
+          <attribute name="Description" value="The ToGo app allows a user to control the ToGo feature directly from the TiVo recorder instead of using the TiVo desktop software on the PC."/>                    
+
+          <attribute name="Documentation" value="http://galleon.tv/content/view/14/29/"/>                              
+
+          <attribute name="Author" value="Leon Nicholls"/>                                        
+
+          <attribute name="Email" value="javahmo@users.sourceforge.net"/>                                                  
+
+          <attribute name="Homepage" value="http://galleon.tv"/>                                                            
+
+          <attribute name="Version" value="1.0"/>
+
+          <attribute name="ConfigurationPanel" value="org.lnicholls.galleon.apps.togo.ToGoOptionsPanel"/>            
+
+          <attribute name="Configuration" value="org.lnicholls.galleon.apps.togo.ToGoConfiguration"/>                      
+
+          <attribute name="Tags" value="Video"/>            
+
+        </manifest>        
+
+        <jar jarfile="${build}/apps/togo.jar" compress="yes" manifest="${build}/MANIFEST.MF">
+
+            <fileset dir="${build}" includes="org/lnicholls/galleon/apps/togo/**"/>
+
+        </jar>
+
+        <copy file="${build}/apps/togo.jar" tofile="./apps/togo.jar" />        
+
+        
+
+        <copy file="./media/images/weather/icon.png" tofile="${build}/org/lnicholls/galleon/apps/weather/icon.png" />        
+
+        <copy file="./media/images/weather/alerticon.png" tofile="${build}/org/lnicholls/galleon/apps/weather/alerticon.png" />                
+
+        <copy file="./media/fonts/Dekadens.ttf" tofile="${build}/org/lnicholls/galleon/apps/weather/Dekadens.ttf" />                
+
+        <copy file="./doc/weatherapp.html" tofile="${build}/org/lnicholls/galleon/apps/weather/help.html" />        
+
+        <manifest file="${build}/MANIFEST.MF">
+
+          <attribute name="Built-By" value="${user.name}"/>
+
+          <attribute name="Main-Class" value="org.lnicholls.galleon.apps.weather.Weather"/>
+
+          <attribute name="HME-Arguments" value=""/>
+
+          <attribute name="Title" value="Weather"/>
+
+          <attribute name="ReleaseDate" value="03/03/05"/>          
+
+          <attribute name="Description" value="The weather app displays the current weather conditions, 5 day forecast, local radar image, national radar image and any weather alerts."/>                    
+
+          <attribute name="Documentation" value="http://galleon.tv/content/view/15/46/"/>                              
+
+          <attribute name="Author" value="Leon Nicholls"/>                                        
+
+          <attribute name="Email" value="javahmo@users.sourceforge.net"/>                                                  
+
+          <attribute name="Homepage" value="http://galleon.tv"/>                                                            
+
+          <attribute name="Version" value="1.0"/>
+
+          <attribute name="ConfigurationPanel" value="org.lnicholls.galleon.apps.weather.WeatherOptionsPanel"/>            
+
+          <attribute name="Configuration" value="org.lnicholls.galleon.apps.weather.WeatherConfiguration"/>                      
+
+          <attribute name="Tags" value="Weather"/>                        
+
+        </manifest>        
+
+        <jar jarfile="${build}/apps/weather.jar" compress="yes" manifest="${build}/MANIFEST.MF">
+
+            <fileset dir="${build}" includes="org/lnicholls/galleon/apps/weather/**"/>
+
+            <fileset dir="./src/org/lnicholls/galleon/apps/weather" excludes="*.java" />
+
+            <fileset dir="./media/fonts" includes="Dekadens.ttf"/>
+
+        </jar>
+
+        <copy file="${build}/apps/weather.jar" tofile="./apps/weather.jar" />                
+
+        
+
+        <copy file="./media/images/music/icon.png" tofile="${build}/org/lnicholls/galleon/apps/music/icon.png" />        
+
+        <copy todir="${build}/media">
+
+          <fileset dir="./media">
+
+            <include name="**/*.wsz"/>
+
+          </fileset>
+
+        </copy>        
+
+        <copy file="./doc/musicapp.html" tofile="${build}/org/lnicholls/galleon/apps/music/help.html" />                
+
+        <manifest file="${build}/MANIFEST.MF">
+
+          <attribute name="Built-By" value="${user.name}"/>
+
+          <attribute name="Main-Class" value="org.lnicholls.galleon.apps.music.Music"/>
+
+          <attribute name="HME-Arguments" value=""/>
+
+          <attribute name="Title" value="Music"/>
+
+          <attribute name="ReleaseDate" value="03/03/05"/>          
+
+          <attribute name="Description" value="The music app allows a user to browse MP3 files using the file system folders."/>                    
+
+          <attribute name="Documentation" value="http://galleon.tv/content/view/16/36/"/>                              
+
+          <attribute name="Author" value="Leon Nicholls"/>                                        
+
+          <attribute name="Email" value="javahmo@users.sourceforge.net"/>                                                  
+
+          <attribute name="Homepage" value="http://galleon.tv"/>                                                            
+
+          <attribute name="Version" value="1.0"/>
+
+          <attribute name="ConfigurationPanel" value="org.lnicholls.galleon.apps.music.MusicOptionsPanel"/>            
+
+          <attribute name="Configuration" value="org.lnicholls.galleon.apps.music.MusicConfiguration"/>                      
+
+          <attribute name="Tags" value="Music"/>                                    
+
+        </manifest>        
+
+        <jar jarfile="${build}/apps/music.jar" compress="yes" manifest="${build}/MANIFEST.MF">
+
+            <fileset dir="${build}" includes="org/lnicholls/galleon/apps/music/**"/>
+
+            <fileset dir="./src/org/lnicholls/galleon/apps/music" excludes="*.java" />
+
+        </jar>
+
+        <copy file="${build}/apps/music.jar" tofile="./apps/music.jar" />                        
+
+        
+
+        
+
+        <copy file="./media/images/photos/icon.png" tofile="${build}/org/lnicholls/galleon/apps/photos/icon.png" />        
+
+        <copy file="./doc/photosapp.html" tofile="${build}/org/lnicholls/galleon/apps/photos/help.html" />                
+
+        <manifest file="${build}/MANIFEST.MF">
+
+          <attribute name="Built-By" value="${user.name}"/>
+
+          <attribute name="Main-Class" value="org.lnicholls.galleon.apps.photos.Photos"/>
+
+          <attribute name="HME-Arguments" value=""/>
+
+          <attribute name="Title" value="Photos"/>
+
+          <attribute name="ReleaseDate" value="03/03/05"/>          
+
+          <attribute name="Description" value="The photos app allows you to browse JPEG, BMP, PNG and GIF files using the file system folders."/>                    
+
+          <attribute name="Documentation" value="http://galleon.tv/content/view/20/38/"/>
+
+          <attribute name="Author" value="Leon Nicholls"/>                                        
+
+          <attribute name="Email" value="javahmo@users.sourceforge.net"/>                                                  
+
+          <attribute name="Homepage" value="http://galleon.tv"/>                                                            
+
+          <attribute name="Version" value="1.0"/>
+
+          <attribute name="ConfigurationPanel" value="org.lnicholls.galleon.apps.photos.PhotosOptionsPanel"/>            
+
+          <attribute name="Configuration" value="org.lnicholls.galleon.apps.photos.PhotosConfiguration"/>                      
+
+          <attribute name="Tags" value="Photos"/>                                                
+
+        </manifest>        
+
+        <jar jarfile="${build}/apps/photos.jar" compress="yes" manifest="${build}/MANIFEST.MF">
+
+            <fileset dir="${build}" includes="org/lnicholls/galleon/apps/photos/**"/>
+
+            <fileset dir="./src/org/lnicholls/galleon/apps/photos" excludes="*.java" />
+
+        </jar>
+
+        <copy file="${build}/apps/photos.jar" tofile="./apps/photos.jar" />                                
+
+        
+
+        <copy file="./media/images/shoutcast/icon.png" tofile="${build}/org/lnicholls/galleon/apps/shoutcast/icon.png" />        
+
+        <copy file="./doc/shoutcastapp.html" tofile="${build}/org/lnicholls/galleon/apps/shoutcast/help.html" />                
+
+        <manifest file="${build}/MANIFEST.MF">
+
+          <attribute name="Built-By" value="${user.name}"/>
+
+          <attribute name="Main-Class" value="org.lnicholls.galleon.apps.shoutcast.Shoutcast"/>
+
+          <attribute name="HME-Arguments" value=""/>
+
+          <attribute name="Title" value="Shoutcast"/>
+
+          <attribute name="ReleaseDate" value="04/16/05"/>          
+
+          <attribute name="Description" value="The Shoutcast app allows you to listen to online radio streams based on your favorite genres."/>                    
+
+          <attribute name="Documentation" value="http://galleon.tv/content/view/18/42/"/>
+
+          <attribute name="Author" value="Leon Nicholls"/>                                        
+
+          <attribute name="Email" value="javahmo@users.sourceforge.net"/>                                                  
+
+          <attribute name="Homepage" value="http://galleon.tv"/>                                                            
+
+          <attribute name="Version" value="1.0"/>
+
+          <attribute name="ConfigurationPanel" value="org.lnicholls.galleon.apps.shoutcast.ShoutcastOptionsPanel"/>            
+
+          <attribute name="Configuration" value="org.lnicholls.galleon.apps.shoutcast.ShoutcastConfiguration"/>                      
+
+          <attribute name="Tags" value="Music"/>                                                            
+
+        </manifest>        
+
+        <jar jarfile="${build}/apps/shoutcast.jar" compress="yes" manifest="${build}/MANIFEST.MF">
+
+            <fileset dir="${build}" includes="org/lnicholls/galleon/apps/shoutcast/**"/>
+
+            <fileset dir="./src/org/lnicholls/galleon/apps/shoutcast" excludes="*.java" />
+
+        </jar>
+
+        <copy file="${build}/apps/shoutcast.jar" tofile="./apps/shoutcast.jar" />                                
+
+        
+
+
+
+        <copy file="./media/images/musicOrganizer/icon.png" tofile="${build}/org/lnicholls/galleon/apps/musicOrganizer/icon.png" />        
+
+        <copy file="./doc/musicorganizerapp.html" tofile="${build}/org/lnicholls/galleon/apps/musicOrganizer/help.html" />                
+
+        <manifest file="${build}/MANIFEST.MF">
+
+          <attribute name="Built-By" value="${user.name}"/>
+
+          <attribute name="Main-Class" value="org.lnicholls.galleon.apps.musicOrganizer.MusicOrganizer"/>
+
+          <attribute name="HME-Arguments" value=""/>
+
+          <attribute name="Title" value="Music Organizer"/>
+
+          <attribute name="ReleaseDate" value="04/22/05"/>          
+
+          <attribute name="Description" value="The organizer imports MP3 files from a list of directories, reads their tags and then creates a record for each file in an embedded database. These records are then used to categorize all of the MP3 files based on their tag information."/>                    
+
+          <attribute name="Documentation" value="http://galleon.tv/content/view/17/37/"/>                              
+
+          <attribute name="Author" value="Leon Nicholls"/>                                        
+
+          <attribute name="Email" value="javahmo@users.sourceforge.net"/>                                                  
+
+          <attribute name="Homepage" value="http://galleon.tv"/>                                                            
+
+          <attribute name="Version" value="1.0"/>
+
+          <attribute name="ConfigurationPanel" value="org.lnicholls.galleon.apps.musicOrganizer.MusicOrganizerOptionsPanel"/>            
+
+          <attribute name="Configuration" value="org.lnicholls.galleon.apps.musicOrganizer.MusicOrganizerConfiguration"/>                      
+
+          <attribute name="Tags" value="Music"/>                                                                        
+
+        </manifest>        
+
+        <jar jarfile="${build}/apps/musicOrganizer.jar" compress="yes" manifest="${build}/MANIFEST.MF">
+
+            <fileset dir="${build}" includes="org/lnicholls/galleon/apps/musicOrganizer/**"/>
+
+            <fileset dir="./src/org/lnicholls/galleon/apps/musicOrganizer" excludes="*.java" />
+
+        </jar>
+
+        <copy file="${build}/apps/musicOrganizer.jar" tofile="./apps/musicOrganizer.jar" />                        
+
+        
+
+        <copy file="./media/images/rss/icon.png" tofile="${build}/org/lnicholls/galleon/apps/rss/icon.png" />        
+
+        <copy file="./doc/rssapp.html" tofile="${build}/org/lnicholls/galleon/apps/rss/help.html" />                
+
+        <manifest file="${build}/MANIFEST.MF">
+
+          <attribute name="Built-By" value="${user.name}"/>
+
+          <attribute name="Main-Class" value="org.lnicholls.galleon.apps.rss.RSS"/>
+
+          <attribute name="HME-Arguments" value=""/>
+
+          <attribute name="Title" value="RSS"/>
+
+          <attribute name="ReleaseDate" value="04/23/05"/>          
+
+          <attribute name="Description" value="The RSS app allows you to view their favorite RSS feeds."/>                    
+
+          <attribute name="Documentation" value="http://galleon.tv/content/view/21/41/"/>
+
+          <attribute name="Author" value="Leon Nicholls"/>                                        
+
+          <attribute name="Email" value="javahmo@users.sourceforge.net"/>                                                  
+
+          <attribute name="Homepage" value="http://galleon.tv"/>                                                            
+
+          <attribute name="Version" value="1.0"/>
+
+          <attribute name="ConfigurationPanel" value="org.lnicholls.galleon.apps.rss.RSSOptionsPanel"/>            
+
+          <attribute name="Configuration" value="org.lnicholls.galleon.apps.rss.RSSConfiguration"/>            
+
+          <attribute name="Tags" value="Music"/>                                                                        
+
+        </manifest>        
+
+        <jar jarfile="${build}/apps/rss.jar" compress="yes" manifest="${build}/MANIFEST.MF">
+
+            <fileset dir="${build}" includes="org/lnicholls/galleon/apps/rss/**"/>
+
+            <fileset dir="./src/org/lnicholls/galleon/apps/rss" excludes="*.java" />
+
+        </jar>
+
+        <copy file="${build}/apps/rss.jar" tofile="./apps/rss.jar" />                                
+
+        
+
+        <copy file="./media/images/desktop/icon.png" tofile="${build}/org/lnicholls/galleon/apps/desktop/icon.png" />        
+
+        <copy file="./doc/desktopapp.html" tofile="${build}/org/lnicholls/galleon/apps/desktop/help.html" />                
+
+        <manifest file="${build}/MANIFEST.MF">
+
+          <attribute name="Built-By" value="${user.name}"/>
+
+          <attribute name="Main-Class" value="org.lnicholls.galleon.apps.desktop.Desktop"/>
+
+          <attribute name="HME-Arguments" value=""/>
+
+          <attribute name="Title" value="Desktop"/>
+
+          <attribute name="ReleaseDate" value="05/04/05"/>          
+
+          <attribute name="Description" value="The Desktop app provides a live view of the desktop of the PC running Galleon."/>                    
+
+          <attribute name="Documentation" value="http://galleon.tv/content/view/26/30/"/>
+
+          <attribute name="Author" value="Leon Nicholls"/>                                        
+
+          <attribute name="Email" value="javahmo@users.sourceforge.net"/>                                                  
+
+          <attribute name="Homepage" value="http://galleon.tv"/>                                                            
+
+          <attribute name="Version" value="1.0"/>
+
+          <attribute name="ConfigurationPanel" value="org.lnicholls.galleon.apps.desktop.DesktopOptionsPanel"/>            
+
+          <attribute name="Configuration" value="org.lnicholls.galleon.apps.desktop.DesktopConfiguration"/>                      
+
+          <attribute name="Tags" value="PC, Photos"/>                                                                        
+
+        </manifest>        
+
+        <jar jarfile="${build}/apps/desktop.jar" compress="yes" manifest="${build}/MANIFEST.MF">
+
+            <fileset dir="${build}" includes="org/lnicholls/galleon/apps/desktop/**"/>
+
+            <fileset dir="./src/org/lnicholls/galleon/apps/desktop" excludes="*.java" />
+
+        </jar>
+
+        <copy file="${build}/apps/desktop.jar" tofile="./apps/desktop.jar" />                                        
+
+        
+
+        <copy file="./media/images/email/icon.png" tofile="${build}/org/lnicholls/galleon/apps/email/icon.png" />        
+
+        <copy file="./media/images/email/alerticon.png" tofile="${build}/org/lnicholls/galleon/apps/email/alerticon.png" />        
+
+        <copy file="./doc/emailapp.html" tofile="${build}/org/lnicholls/galleon/apps/email/help.html" />                
+
+        <manifest file="${build}/MANIFEST.MF">
+
+          <attribute name="Built-By" value="${user.name}"/>
+
+          <attribute name="Main-Class" value="org.lnicholls.galleon.apps.email.Email"/>
+
+          <attribute name="HME-Arguments" value=""/>
+
+          <attribute name="Title" value="Email"/>
+
+          <attribute name="ReleaseDate" value="05/09/05"/>          
+
+          <attribute name="Description" value="The Email app allows you to view your new incoming email on your TiVo."/>                    
+
+          <attribute name="Documentation" value="http://galleon.tv/content/view/22/31/"/>                              
+
+          <attribute name="Author" value="Leon Nicholls"/>                                        
+
+          <attribute name="Email" value="javahmo@users.sourceforge.net"/>                                                  
+
+          <attribute name="Homepage" value="http://galleon.tv"/>                                                            
+
+          <attribute name="Version" value="1.0"/>
+
+          <attribute name="ConfigurationPanel" value="org.lnicholls.galleon.apps.email.EmailOptionsPanel"/>            
+
+          <attribute name="Configuration" value="org.lnicholls.galleon.apps.email.EmailConfiguration"/>                      
+
+          <attribute name="Tags" value="Internet"/>                                                                                                            
+
+        </manifest>        
+
+        <jar jarfile="${build}/apps/email.jar" compress="yes" manifest="${build}/MANIFEST.MF">
+
+            <fileset dir="${build}" includes="org/lnicholls/galleon/apps/email/**"/>
+
+            <fileset dir="./src/org/lnicholls/galleon/apps/email" excludes="*.java" />
+
+        </jar>
+
+        <copy file="${build}/apps/email.jar" tofile="./apps/email.jar" />                                                
+
+        
+
+        <copy file="./media/images/internet/icon.png" tofile="${build}/org/lnicholls/galleon/apps/internet/icon.png" />        
+
+        <copy file="./doc/internetapp.html" tofile="${build}/org/lnicholls/galleon/apps/internet/help.html" />                
+
+        <manifest file="${build}/MANIFEST.MF">
+
+          <attribute name="Built-By" value="${user.name}"/>
+
+          <attribute name="Main-Class" value="org.lnicholls.galleon.apps.internet.Internet"/>
+
+          <attribute name="HME-Arguments" value=""/>
+
+          <attribute name="Title" value="Internet Images"/>
+
+          <attribute name="ReleaseDate" value="05/14/05"/>          
+
+          <attribute name="Description" value="The Internet app allows you to view Internet images such as webcams."/>                    
+
+          <attribute name="Documentation" value="http://galleon.tv/content/view/23/32/"/>
+
+          <attribute name="Author" value="Leon Nicholls"/>                                        
+
+          <attribute name="Email" value="javahmo@users.sourceforge.net"/>                                                  
+
+          <attribute name="Homepage" value="http://galleon.tv"/>                                                            
+
+          <attribute name="Version" value="1.0"/>
+
+          <attribute name="ConfigurationPanel" value="org.lnicholls.galleon.apps.internet.InternetOptionsPanel"/>            
+
+          <attribute name="Configuration" value="org.lnicholls.galleon.apps.internet.InternetConfiguration"/>                      
+
+          <attribute name="Tags" value="Internet"/>                                                                                                            
+
+        </manifest>        
+
+        <jar jarfile="${build}/apps/internet.jar" compress="yes" manifest="${build}/MANIFEST.MF">
+
+            <fileset dir="${build}" includes="org/lnicholls/galleon/apps/internet/**"/>
+
+            <fileset dir="./src/org/lnicholls/galleon/apps/internet" excludes="*.java" />
+
+        </jar>
+
+        <copy file="${build}/apps/internet.jar" tofile="./apps/internet.jar" />                                                        
+
+        
+
+        <copy file="./media/images/playlists/icon.png" tofile="${build}/org/lnicholls/galleon/apps/playlists/icon.png" />        
+
+        <copy file="./doc/playlistsapp.html" tofile="${build}/org/lnicholls/galleon/apps/playlists/help.html" />                
+
+        <manifest file="${build}/MANIFEST.MF">
+
+          <attribute name="Built-By" value="${user.name}"/>
+
+          <attribute name="Main-Class" value="org.lnicholls.galleon.apps.playlists.Playlists"/>
+
+          <attribute name="HME-Arguments" value=""/>
+
+          <attribute name="Title" value="Playlists"/>
+
+          <attribute name="ReleaseDate" value="05/14/05"/>          
+
+          <attribute name="Description" value="The Playlists app allows you to play your favorite .m3u and .pls playlists."/>                    
+
+          <attribute name="Documentation" value="http://galleon.tv/content/view/25/39/"/>
+
+          <attribute name="Author" value="Leon Nicholls"/>                                        
+
+          <attribute name="Email" value="javahmo@users.sourceforge.net"/>                                                  
+
+          <attribute name="Homepage" value="http://galleon.tv"/>                                                            
+
+          <attribute name="Version" value="1.0"/>
+
+          <attribute name="ConfigurationPanel" value="org.lnicholls.galleon.apps.playlists.PlaylistsOptionsPanel"/>            
+
+          <attribute name="Configuration" value="org.lnicholls.galleon.apps.playlists.PlaylistsConfiguration"/>
+
+          <attribute name="Tags" value="Music"/>
+
+        </manifest>        
+
+        <jar jarfile="${build}/apps/playlists.jar" compress="yes" manifest="${build}/MANIFEST.MF">
+
+            <fileset dir="${build}" includes="org/lnicholls/galleon/apps/playlists/**"/>
+
+            <fileset dir="./src/org/lnicholls/galleon/apps/playlists" excludes="*.java" />
+
+        </jar>
+
+        <copy file="${build}/apps/playlists.jar" tofile="./apps/playlists.jar" />                                                        
+
+        
+
+<!--        
+
+        <copy file="./media/images/audioScrobbler/icon.png" tofile="${build}/org/lnicholls/galleon/apps/audioScrobbler/icon.png" />        
+
+        <copy file="./doc/audioScrobblerapp.html" tofile="${build}/org/lnicholls/galleon/apps/audioScrobbler/help.html" />                
+
+        <manifest file="${build}/MANIFEST.MF">
+
+          <attribute name="Built-By" value="${user.name}"/>
+
+          <attribute name="Main-Class" value="org.lnicholls.galleon.apps.audioScrobbler.AudioScrobbler"/>
+
+          <attribute name="HME-Arguments" value=""/>
+
+          <attribute name="Title" value="Audio Scrobbler"/>
+
+          <attribute name="ReleaseDate" value="05/16/05"/>          
+
+          <attribute name="Description" value="Audio Scrobbler"/>
+
+          <attribute name="Documentation" value="help.html"/>                              
+
+          <attribute name="Author" value="Leon Nicholls"/>                                        
+
+          <attribute name="Email" value="javahmo@users.sourceforge.net"/>                                                  
+
+          <attribute name="Homepage" value="http://galleon.tv"/>                                                            
+
+          <attribute name="Version" value="1.0"/>
+
+          <attribute name="ConfigurationPanel" value="org.lnicholls.galleon.apps.audioScrobbler.AudioScrobblerOptionsPanel"/>            
+
+          <attribute name="Tags" value="Music"/>            
+
+        </manifest>        
+
+        <jar jarfile="${build}/apps/audioScrobbler.jar" compress="yes" manifest="${build}/MANIFEST.MF">
+
+            <fileset dir="${build}" includes="org/lnicholls/galleon/apps/audioScrobbler/**"/>
+
+            <fileset dir="./src/org/lnicholls/galleon/apps/audioScrobbler" excludes="*.java" />
+
+        </jar>
+
+        <copy file="${build}/apps/audioScrobbler.jar" tofile="./apps/audioScrobbler.jar" />                                                                
+
+-->        
+
+        <copy file="./media/images/podcasting/icon.png" tofile="${build}/org/lnicholls/galleon/apps/podcasting/icon.png" />        
+
+        <copy file="./doc/podcastingapp.html" tofile="${build}/org/lnicholls/galleon/apps/podcasting/help.html" />                
+
+        <manifest file="${build}/MANIFEST.MF">
+
+          <attribute name="Built-By" value="${user.name}"/>
+
+          <attribute name="Main-Class" value="org.lnicholls.galleon.apps.podcasting.Podcasting"/>
+
+          <attribute name="HME-Arguments" value=""/>
+
+          <attribute name="Title" value="Podcasting"/>
+
+          <attribute name="ReleaseDate" value="05/20/05"/>          
+
+          <attribute name="Description" value="The Podcasting app allows you to subscribe and listen to your favorite podcasts."/>
+
+          <attribute name="Documentation" value="http://galleon.tv/content/view/19/40/"/>
+
+          <attribute name="Author" value="Leon Nicholls"/>                                        
+
+          <attribute name="Email" value="javahmo@users.sourceforge.net"/>                                                  
+
+          <attribute name="Homepage" value="http://galleon.tv"/>                                                            
+
+          <attribute name="Version" value="1.0"/>
+
+          <attribute name="ConfigurationPanel" value="org.lnicholls.galleon.apps.podcasting.PodcastingOptionsPanel"/>            
+
+          <attribute name="Configuration" value="org.lnicholls.galleon.apps.podcasting.PodcastingConfiguration"/>                      
+
+          <attribute name="Tags" value="Music"/>            
+
+        </manifest>        
+
+        <jar jarfile="${build}/apps/podcasting.jar" compress="yes" manifest="${build}/MANIFEST.MF">
+
+            <fileset dir="${build}" includes="org/lnicholls/galleon/apps/podcasting/**"/>
+
+            <fileset dir="./src/org/lnicholls/galleon/apps/podcasting" excludes="*.java" />
+
+        </jar>
+
+        <copy file="${build}/apps/podcasting.jar" tofile="./apps/podcasting.jar" />
+
+        
+
+        <copy file="./media/images/iTunes/icon.png" tofile="${build}/org/lnicholls/galleon/apps/iTunes/icon.png" />        
+
+        <copy file="./doc/itunesapp.html" tofile="${build}/org/lnicholls/galleon/apps/iTunes/help.html" />                
+
+        <manifest file="${build}/MANIFEST.MF">
+
+          <attribute name="Built-By" value="${user.name}"/>
+
+          <attribute name="Main-Class" value="org.lnicholls.galleon.apps.iTunes.iTunes"/>
+
+          <attribute name="HME-Arguments" value=""/>
+
+          <attribute name="Title" value="iTunes"/>
+
+          <attribute name="ReleaseDate" value="06/04/05"/>          
+
+          <attribute name="Description" value="The iTunes app allows you to play your iTunes playlists on your TiVo. Only MP3 files are supported."/>
+
+          <attribute name="Documentation" value="http://galleon.tv/content/view/24/34/"/>
+
+          <attribute name="Author" value="Leon Nicholls"/>                                        
+
+          <attribute name="Email" value="javahmo@users.sourceforge.net"/>                                                  
+
+          <attribute name="Homepage" value="http://galleon.tv"/>                                                            
+
+          <attribute name="Version" value="1.0"/>
+
+          <attribute name="ConfigurationPanel" value="org.lnicholls.galleon.apps.iTunes.iTunesOptionsPanel"/>            
+
+          <attribute name="Configuration" value="org.lnicholls.galleon.apps.iTunes.iTunesConfiguration"/>                      
+
+          <attribute name="Tags" value="Music"/>            
+
+        </manifest>        
+
+        <jar jarfile="${build}/apps/iTunes.jar" compress="yes" manifest="${build}/MANIFEST.MF">
+
+            <fileset dir="${build}" includes="org/lnicholls/galleon/apps/iTunes/**"/>
+
+            <fileset dir="./src/org/lnicholls/galleon/apps/iTunes" excludes="*.java" />
+
+        </jar>
+
+        <copy file="${build}/apps/iTunes.jar" tofile="./apps/iTunes.jar" />        
+
+        
+
+        
+
+        <copy file="./media/images/movies/icon.png" tofile="${build}/org/lnicholls/galleon/apps/movies/icon.png" />        
+
+        <copy file="./doc/moviesapp.html" tofile="${build}/org/lnicholls/galleon/apps/movies/help.html" />                
+
+        <manifest file="${build}/MANIFEST.MF">
+
+          <attribute name="Built-By" value="${user.name}"/>
+
+          <attribute name="Main-Class" value="org.lnicholls.galleon.apps.movies.Movies"/>
+
+          <attribute name="HME-Arguments" value=""/>
+
+          <attribute name="Title" value="Movies"/>
+
+          <attribute name="ReleaseDate" value="07/09/05"/>          
+
+          <attribute name="Description" value="The Movies app allows you view local movie theater listings."/>
+
+          <attribute name="Documentation" value="http://galleon.tv/content/view/13/28/"/>
+
+          <attribute name="Author" value="Leon Nicholls"/>                                        
+
+          <attribute name="Email" value="javahmo@users.sourceforge.net"/>                                                  
+
+          <attribute name="Homepage" value="http://galleon.tv"/>                                                            
+
+          <attribute name="Version" value="1.0"/>
+
+          <attribute name="ConfigurationPanel" value="org.lnicholls.galleon.apps.movies.MoviesOptionsPanel"/>            
+
+          <attribute name="Configuration" value="org.lnicholls.galleon.apps.movies.MoviesConfiguration"/>                      
+
+          <attribute name="Tags" value="Music"/>            
+
+        </manifest>        
+
+        <jar jarfile="${build}/apps/movies.jar" compress="yes" manifest="${build}/MANIFEST.MF">
+
+            <fileset dir="${build}" includes="org/lnicholls/galleon/apps/movies/**"/>
+
+            <fileset dir="./src/org/lnicholls/galleon/apps/movies" excludes="*.java" />
+
+        </jar>
+
+        <copy file="${build}/apps/movies.jar" tofile="./apps/movies.jar" />                
+
+        
+
+        <copy file="./media/images/videocasting/icon.png" tofile="${build}/org/lnicholls/galleon/apps/videocasting/icon.png" />        
+
+        <copy file="./doc/videocastingapp.html" tofile="${build}/org/lnicholls/galleon/apps/videocasting/help.html" />                
+
+        <manifest file="${build}/MANIFEST.MF">
+
+          <attribute name="Built-By" value="${user.name}"/>
+
+          <attribute name="Main-Class" value="org.lnicholls.galleon.apps.videocasting.Videocasting"/>
+
+          <attribute name="HME-Arguments" value=""/>
+
+          <attribute name="Title" value="Videocasting"/>
+
+          <attribute name="ReleaseDate" value="08/28/05"/>          
+
+          <attribute name="Description" value="The Videocasting app allows you to subscribe and listen to your favorite videocasts."/>
+
+          <attribute name="Documentation" value="http://galleon.tv/content/view/28/45/"/>
+
+          <attribute name="Author" value="Leon Nicholls"/>                                        
+
+          <attribute name="Email" value="javahmo@users.sourceforge.net"/>                                                  
+
+          <attribute name="Homepage" value="http://galleon.tv"/>                                                            
+
+          <attribute name="Version" value="1.0"/>
+
+          <attribute name="ConfigurationPanel" value="org.lnicholls.galleon.apps.videocasting.VideocastingOptionsPanel"/>            
+
+          <attribute name="Configuration" value="org.lnicholls.galleon.apps.videocasting.VideocastingConfiguration"/>                      
+
+          <attribute name="Tags" value="Video"/>            
+
+        </manifest>        
+
+        <jar jarfile="${build}/apps/videocasting.jar" compress="yes" manifest="${build}/MANIFEST.MF">
+
+            <fileset dir="${build}" includes="org/lnicholls/galleon/apps/videocasting/**"/>
+
+            <fileset dir="./src/org/lnicholls/galleon/apps/videocasting" excludes="*.java" />
+
+        </jar>
+
+        <copy file="${build}/apps/videocasting.jar" tofile="./apps/videocasting.jar" />        
+
+        
+
+        <copy file="./media/images/internetSlideshows/icon.png" tofile="${build}/org/lnicholls/galleon/apps/internetSlideshows/icon.png" />        
+
+        <copy file="./doc/internetslideshowsapp.html" tofile="${build}/org/lnicholls/galleon/apps/internetSlideshows/help.html" />                
+
+        <manifest file="${build}/MANIFEST.MF">
+
+          <attribute name="Built-By" value="${user.name}"/>
+
+          <attribute name="Main-Class" value="org.lnicholls.galleon.apps.internetSlideshows.InternetSlideshows"/>
+
+          <attribute name="HME-Arguments" value=""/>
+
+          <attribute name="Title" value="Internet Slideshows"/>
+
+          <attribute name="ReleaseDate" value="09/08/05"/>          
+
+          <attribute name="Description" value="The Internet Slideshows app displays photos from RSS feeds."/>
+
+          <attribute name="Documentation" value="http://galleon.tv/content/view/27/33/"/>
+
+          <attribute name="Author" value="Leon Nicholls"/>                                        
+
+          <attribute name="Email" value="javahmo@users.sourceforge.net"/>                                                  
+
+          <attribute name="Homepage" value="http://galleon.tv"/>                                                            
+
+          <attribute name="Version" value="1.0"/>
+
+          <attribute name="ConfigurationPanel" value="org.lnicholls.galleon.apps.internetSlideshows.InternetSlideshowsOptionsPanel"/>            
+
+          <attribute name="Configuration" value="org.lnicholls.galleon.apps.internetSlideshows.InternetSlideshowsConfiguration"/>                      
+
+          <attribute name="Tags" value="Photos"/>            
+
+        </manifest>        
+
+        <jar jarfile="${build}/apps/internetSlideshows.jar" compress="yes" manifest="${build}/MANIFEST.MF">
+
+            <fileset dir="${build}" includes="org/lnicholls/galleon/apps/internetSlideshows/**"/>
+
+            <fileset dir="./src/org/lnicholls/galleon/apps/internetSlideshows" excludes="*.java" />
+
+        </jar>
+
+        <copy file="${build}/apps/internetSlideshows.jar" tofile="./apps/internetSlideshows.jar" />                
+
+        
+
+        <copy file="./media/images/upcoming/icon.png" tofile="${build}/org/lnicholls/galleon/apps/upcoming/icon.png" />        
+
+        <copy file="./doc/upcomingapp.html" tofile="${build}/org/lnicholls/galleon/apps/upcoming/help.html" />                
+
+        <manifest file="${build}/MANIFEST.MF">
+
+          <attribute name="Built-By" value="${user.name}"/>
+
+          <attribute name="Main-Class" value="org.lnicholls.galleon.apps.upcoming.Upcoming"/>
+
+          <attribute name="HME-Arguments" value=""/>
+
+          <attribute name="Title" value="Upcoming"/>
+
+          <attribute name="ReleaseDate" value="10/28/05"/>          
+
+          <attribute name="Description" value="The Upcoming app displays upcoming events and venues."/>
+
+          <attribute name="Documentation" value="http://galleon.tv/content/view/29/44/"/>
+
+          <attribute name="Author" value="Leon Nicholls"/>                                        
+
+          <attribute name="Email" value="javahmo@users.sourceforge.net"/>                                                  
+
+          <attribute name="Homepage" value="http://galleon.tv"/>                                                            
+
+          <attribute name="Version" value="1.0"/>
+
+          <attribute name="ConfigurationPanel" value="org.lnicholls.galleon.apps.upcoming.UpcomingOptionsPanel"/>            
+
+          <attribute name="Configuration" value="org.lnicholls.galleon.apps.upcoming.UpcomingConfiguration"/>                      
+
+          <attribute name="Tags" value="Events"/>            
+
+        </manifest>        
+
+        <jar jarfile="${build}/apps/upcoming.jar" compress="yes" manifest="${build}/MANIFEST.MF">
+
+            <fileset dir="${build}" includes="org/lnicholls/galleon/apps/upcoming/**"/>
+
+            <fileset dir="./src/org/lnicholls/galleon/apps/upcoming" excludes="*.java" />
+
+        </jar>
+
+        <copy file="${build}/apps/upcoming.jar" tofile="./apps/upcoming.jar" />                        
+
+        
+
+        <copy file="./media/images/jukebox/icon.png" tofile="${build}/org/lnicholls/galleon/apps/jukebox/icon.png" />        
+
+        <copy file="./doc/jukeboxapp.html" tofile="${build}/org/lnicholls/galleon/apps/jukebox/help.html" />                
+
+        <manifest file="${build}/MANIFEST.MF">
+
+          <attribute name="Built-By" value="${user.name}"/>
+
+          <attribute name="Main-Class" value="org.lnicholls.galleon.apps.jukebox.Jukebox"/>
+
+          <attribute name="HME-Arguments" value=""/>
+
+          <attribute name="Title" value="Jukebox"/>
+
+          <attribute name="ReleaseDate" value="10/28/05"/>          
+
+          <attribute name="Description" value="The Jukebox app allows you to create dynamic playlists."/>
+
+          <attribute name="Documentation" value="http://galleon.tv/content/view/30/35/"/>                              
+
+          <attribute name="Author" value="Leon Nicholls"/>                                        
+
+          <attribute name="Email" value="javahmo@users.sourceforge.net"/>                                                  
+
+          <attribute name="Homepage" value="http://galleon.tv"/>                                                            
+
+          <attribute name="Version" value="1.0"/>
+
+          <attribute name="ConfigurationPanel" value="org.lnicholls.galleon.apps.jukebox.JukeboxOptionsPanel"/>            
+
+          <attribute name="Configuration" value="org.lnicholls.galleon.apps.jukebox.JukeboxConfiguration"/>                      
+
+          <attribute name="Tags" value="Music"/>            
+
+        </manifest>        
+
+        <jar jarfile="${build}/apps/jukebox.jar" compress="yes" manifest="${build}/MANIFEST.MF">
+
+            <fileset dir="${build}" includes="org/lnicholls/galleon/apps/jukebox/**"/>
+
+            <fileset dir="./src/org/lnicholls/galleon/apps/jukebox" excludes="*.java" />
+
+        </jar>
+
+        <copy file="${build}/apps/jukebox.jar" tofile="./apps/jukebox.jar" />                                
+
+        
+
+        <copy file="./media/images/traffic/icon.png" tofile="${build}/org/lnicholls/galleon/apps/traffic/icon.png" />        
+
+        <copy file="./doc/trafficapp.html" tofile="${build}/org/lnicholls/galleon/apps/traffic/help.html" />                
+
+        <manifest file="${build}/MANIFEST.MF">
+
+          <attribute name="Built-By" value="${user.name}"/>
+
+          <attribute name="Main-Class" value="org.lnicholls.galleon.apps.traffic.Traffic"/>
+
+          <attribute name="HME-Arguments" value=""/>
+
+          <attribute name="Title" value="Traffic"/>
+
+          <attribute name="ReleaseDate" value="11/09/05"/>          
+
+          <attribute name="Description" value="The Traffic app displays maps of local traffic conditions."/>
+
+          <attribute name="Documentation" value="http://galleon.tv/content/view/31/43/"/>
+
+          <attribute name="Author" value="Leon Nicholls"/>                                        
+
+          <attribute name="Email" value="javahmo@users.sourceforge.net"/>                                                  
+
+          <attribute name="Homepage" value="http://galleon.tv"/>                                                            
+
+          <attribute name="Version" value="1.0"/>
+
+          <attribute name="ConfigurationPanel" value="org.lnicholls.galleon.apps.traffic.TrafficOptionsPanel"/>            
+
+          <attribute name="Configuration" value="org.lnicholls.galleon.apps.traffic.TrafficConfiguration"/>                      
+
+          <attribute name="Tags" value="Traffic"/>            
+
+        </manifest>        
+
+        <jar jarfile="${build}/apps/traffic.jar" compress="yes" manifest="${build}/MANIFEST.MF">
+
+            <fileset dir="${build}" includes="org/lnicholls/galleon/apps/traffic/**"/>
+
+            <fileset dir="./src/org/lnicholls/galleon/apps/traffic" excludes="*.java" />
+
+        </jar>
+
+        <copy file="${build}/apps/traffic.jar" tofile="./apps/traffic.jar" />
+
+        
+
+        <copy file="./media/images/menu/icon.png" tofile="${build}/org/lnicholls/galleon/apps/menu/icon.png" />        
+
+        <manifest file="${build}/MANIFEST.MF">
+
+          <attribute name="Built-By" value="${user.name}"/>
+
+          <attribute name="Main-Class" value="org.lnicholls.galleon.apps.menu.Menu"/>
+
+          <attribute name="HME-Arguments" value=""/>
+
+          <attribute name="Title" value="Menu"/>
+
+          <attribute name="ReleaseDate" value="12/10/05"/>          
+
+          <attribute name="Description" value="The menu app groups Galleon apps."/>
+
+          <attribute name="Documentation" value="http://galleon.tv"/>
+
+          <attribute name="Author" value="Leon Nicholls"/>                                        
+
+          <attribute name="Email" value="javahmo@users.sourceforge.net"/>                                                  
+
+          <attribute name="Homepage" value="http://galleon.tv"/>                                                            
+
+          <attribute name="Version" value="1.0"/>
+
+          <attribute name="ConfigurationPanel" value="org.lnicholls.galleon.apps.menu.MenuOptionsPanel"/>            
+
+          <attribute name="Configuration" value="org.lnicholls.galleon.apps.menu.MenuConfiguration"/>                      
+
+          <attribute name="Tags" value="Menu"/>            
+
+        </manifest>        
+
+        <jar jarfile="${build}/apps/menu.jar" compress="yes" manifest="${build}/MANIFEST.MF">
+
+            <fileset dir="${build}" includes="org/lnicholls/galleon/apps/menu/**"/>
+
+            <fileset dir="./src/org/lnicholls/galleon/apps/menu" excludes="*.java" />
+
+        </jar>
+
+        <copy file="${build}/apps/menu.jar" tofile="./apps/menu.jar" />        
+
+
+
+        <copy file="./media/images/jabber/icon.png" tofile="${build}/org/lnicholls/galleon/apps/jabber/icon.png" />        
+        <copy file="./media/images/jabber/message.png" tofile="${build}/org/lnicholls/galleon/apps/jabber/message.png" />                
+
+        <manifest file="${build}/MANIFEST.MF">
+
+          <attribute name="Built-By" value="${user.name}"/>
+
+          <attribute name="Main-Class" value="org.lnicholls.galleon.apps.jabber.Jabber"/>
+
+          <attribute name="HME-Arguments" value=""/>
+
+          <attribute name="Title" value="Jabber"/>
+
+          <attribute name="ReleaseDate" value="01/25/06"/>          
+
+          <attribute name="Description" value="The Jabber app allows you to connect to the Jabber messenger service."/>
+
+          <attribute name="Documentation" value="http://galleon.tv/content/view/104/43/"/>
+
+          <attribute name="Author" value="Leon Nicholls"/>                                        
+
+          <attribute name="Email" value="javahmo@users.sourceforge.net"/>                                                  
+
+          <attribute name="Homepage" value="http://galleon.tv"/>                                                            
+
+          <attribute name="Version" value="1.0"/>
+
+          <attribute name="ConfigurationPanel" value="org.lnicholls.galleon.apps.jabber.JabberOptionsPanel"/>            
+
+          <attribute name="Configuration" value="org.lnicholls.galleon.apps.jabber.JabberConfiguration"/>                      
+
+          <attribute name="Tags" value="Chat"/>            
+
+        </manifest>        
+
+        <jar jarfile="${build}/apps/jabber.jar" compress="yes" manifest="${build}/MANIFEST.MF">
+
+            <fileset dir="${build}" includes="org/lnicholls/galleon/apps/jabber/**"/>
+
+            <fileset dir="./src/org/lnicholls/galleon/apps/jabber" excludes="*.java" />
+
+        </jar>
+
+        <copy file="${build}/apps/jabber.jar" tofile="./apps/jabber.jar" />        
+
+
+
+
+
+        <copy file="./apps/launcher.txt" tofile="${build}/hme/launcher.txt" />                
+
+        <copy file="./ReleaseNotes.txt" tofile="${build}/ReleaseNotes.txt" />                                
+
+        
+
+
+
+        <delete dir="${build}/org" />
+
+
+
+        <echo>Creating Galleon skin</echo>
+
+        <copy file="./media/images/busy2.gif" tofile="${build}/skins/music/busy.gif" />                                
+
+        <copy file="./media/images/star.png" tofile="${build}/skins/music/star.png" />                                        
+
+
+
+        <copy file="./media/images/music/icon.png" tofile="${build}/skins/music/icon.png" />        
+
+        <copy file="./media/images/music/folder.png" tofile="${build}/skins/music/folder.png" />                
+
+        <copy file="./media/images/music/cd.png" tofile="${build}/skins/music/cd.png" />                
+
+        <copy file="./media/images/music/playlist.png" tofile="${build}/skins/music/playlist.png" />                        
+
+        <copy file="./media/images/music/background.jpg" tofile="${build}/skins/music/background.jpg" />
+
+
+
+        <copy file="./media/images/photos/icon.png" tofile="${build}/skins/photos/icon.png" />        
+
+        <copy file="./media/images/photos/folder.png" tofile="${build}/skins/photos/folder.png" />        
+
+        <copy file="./media/images/photos/folder_red_open.png" tofile="${build}/skins/photos/folder_red_open.png" />        
+
+        <copy file="./media/images/photos/background.jpg" tofile="${build}/skins/photos/background.jpg" />
+
+        
+
+        <copy file="./media/images/togo/background.jpg" tofile="${build}/skins/togo/background.jpg" />
+
+        <copy file="./media/images/togo/icon.png" tofile="${build}/skins/togo/icon.png" />                
+
+        <copy file="./media/images/togo/yellowball.png" tofile="${build}/skins/togo/yellowball.png" />                
+
+        <copy file="./media/images/togo/yellowball!.png" tofile="${build}/skins/togo/yellowball!.png" />                        
+
+        <copy file="./media/images/togo/greenball.png" tofile="${build}/skins/togo/greenball.png" />                                        
+
+        <copy file="./media/images/togo/redball.png" tofile="${build}/skins/togo/redball.png" />                                                
+
+        <copy file="./media/images/togo/blueball.png" tofile="${build}/skins/togo/blueball.png" />                                                        
+
+        <copy file="./media/images/togo/empty.png" tofile="${build}/skins/togo/empty.png" />                                                                
+
+        <copy file="./media/images/togo/lock.png" tofile="${build}/skins/togo/lock.png" />                                                                        
+
+        
+
+        <copy file="./media/images/weather/background.jpg" tofile="${build}/skins/weather/background.jpg" />
+
+        <copy todir="${build}/skins/weather/">
+
+            <fileset dir="./media/images/weather" includes="*.png" />
+
+        </copy>        
+
+        
+
+
+
+        <copy file="./media/images/shoutcast/icon.png" tofile="${build}/skins/shoutcast/icon.png" />        
+
+        <copy file="./media/images/shoutcast/folder.png" tofile="${build}/skins/shoutcast/folder.png" />                
+
+        <copy file="./media/images/shoutcast/station.png" tofile="${build}/skins/shoutcast/station.png" />                
+
+        <copy file="./media/images/shoutcast/background.jpg" tofile="${build}/skins/shoutcast/background.jpg" />        
+
+        
+
+        <copy file="./media/images/musicOrganizer/icon.png" tofile="${build}/skins/musicOrganizer/icon.png" />        
+
+        <copy file="./media/images/musicOrganizer/folder.png" tofile="${build}/skins/musicOrganizer/folder.png" />                
+
+        <copy file="./media/images/musicOrganizer/cd.png" tofile="${build}/skins/musicOrganizer/cd.png" />                
+
+        <copy file="./media/images/musicOrganizer/background.jpg" tofile="${build}/skins/musicOrganizer/background.jpg" />
+
+        
+
+        <copy file="./media/images/rss/icon.png" tofile="${build}/skins/rss/icon.png" />        
+
+        <copy file="./media/images/rss/folder.png" tofile="${build}/skins/rss/folder.png" />                
+
+        <copy file="./media/images/rss/item.png" tofile="${build}/skins/rss/item.png" />                
+
+        <copy file="./media/images/rss/background.jpg" tofile="${build}/skins/rss/background.jpg" />        
+
+        
+
+        <copy file="./media/images/desktop/icon.png" tofile="${build}/skins/desktop/icon.png" />        
+
+        
+
+        <copy file="./media/images/email/icon.png" tofile="${build}/skins/email/icon.png" />                
+
+        <copy file="./media/images/email/background.jpg" tofile="${build}/skins/email/background.jpg" />                        
+
+        <copy file="./media/images/email/folder.png" tofile="${build}/skins/email/folder.png" />
+
+        
+
+        <copy file="./media/images/internet/icon.png" tofile="${build}/skins/internet/icon.png" />                
+
+        <copy file="./media/images/internet/background.jpg" tofile="${build}/skins/internet/background.jpg" />                                
+
+        
+
+        <copy file="./media/images/playlists/icon.png" tofile="${build}/skins/playlists/icon.png" />                
+
+        <copy file="./media/images/playlists/background.jpg" tofile="${build}/skins/playlists/background.jpg" />                                        
+
+        <copy file="./media/images/playlists/playlist.png" tofile="${build}/skins/playlists/playlist.png" />                                
+
+        
+
+<!--
+
+        <copy file="./media/images/audioScrobbler/icon.png" tofile="${build}/skins/audioScrobbler/icon.png" />                
+
+        <copy file="./media/images/audioScrobbler/background.jpg" tofile="${build}/skins/audioScrobbler/background.jpg" />                                        
+
+        <copy file="./media/images/audioScrobbler/item.png" tofile="${build}/skins/audioScrobbler/item.png" />
+
+-->
+
+        <copy file="./media/images/podcasting/icon.png" tofile="${build}/skins/podcasting/icon.png" />        
+
+        <copy file="./media/images/podcasting/folder.png" tofile="${build}/skins/podcasting/folder.png" />                
+
+        <copy file="./media/images/podcasting/item.png" tofile="${build}/skins/podcasting/item.png" />                
+
+        <copy file="./media/images/podcasting/background.jpg" tofile="${build}/skins/podcasting/background.jpg" />        
+
+        
+
+        <copy file="./media/images/iTunes/icon.png" tofile="${build}/skins/iTunes/icon.png" />        
+
+        <copy file="./media/images/iTunes/folder.png" tofile="${build}/skins/iTunes/folder.png" />                
+
+        <copy file="./media/images/iTunes/item.png" tofile="${build}/skins/iTunes/item.png" />                
+
+        <copy file="./media/images/iTunes/background.jpg" tofile="${build}/skins/iTunes/background.jpg" />                
+
+        
+
+        <copy file="./media/images/movies/icon.png" tofile="${build}/skins/movies/icon.png" />        
+
+        <copy file="./media/images/movies/folder.png" tofile="${build}/skins/movies/folder.png" />                
+
+        <copy file="./media/images/movies/item.png" tofile="${build}/skins/movies/item.png" />                
+
+        <copy file="./media/images/movies/favorite.png" tofile="${build}/skins/movies/favorite.png" />                
+
+        <copy file="./media/images/movies/background.jpg" tofile="${build}/skins/movies/background.jpg" />                        
+
+        
+
+        <copy file="./media/images/videocasting/icon.png" tofile="${build}/skins/videocasting/icon.png" />        
+
+        <copy file="./media/images/videocasting/folder.png" tofile="${build}/skins/videocasting/folder.png" />                
+
+        <copy file="./media/images/videocasting/item.png" tofile="${build}/skins/videocasting/item.png" />                
+
+        <copy file="./media/images/videocasting/background.jpg" tofile="${build}/skins/videocasting/background.jpg" />                
+
+        
+
+        <copy file="./media/images/internetSlideshows/icon.png" tofile="${build}/skins/internetSlideshows/icon.png" />        
+
+        <copy file="./media/images/internetSlideshows/folder.png" tofile="${build}/skins/internetSlideshows/folder.png" />                
+
+        <copy file="./media/images/internetSlideshows/item.png" tofile="${build}/skins/internetSlideshows/item.png" />                
+
+        <copy file="./media/images/internetSlideshows/background.jpg" tofile="${build}/skins/internetSlideshows/background.jpg" />                        
+
+        
+
+        <copy file="./media/images/upcoming/icon.png" tofile="${build}/skins/upcoming/icon.png" />        
+
+        <copy file="./media/images/upcoming/folder.png" tofile="${build}/skins/upcoming/folder.png" />                
+
+        <copy file="./media/images/upcoming/item.png" tofile="${build}/skins/upcoming/item.png" />                
+
+        <copy file="./media/images/upcoming/background.jpg" tofile="${build}/skins/upcoming/background.jpg" />                                
+
+        
+
+        <copy file="./media/images/jukebox/icon.png" tofile="${build}/skins/jukebox/icon.png" />        
+
+        <copy file="./media/images/jukebox/folder.png" tofile="${build}/skins/jukebox/folder.png" />                
+
+        <copy file="./media/images/jukebox/item.png" tofile="${build}/skins/jukebox/item.png" />                
+
+        <copy file="./media/images/jukebox/background.jpg" tofile="${build}/skins/jukebox/background.jpg" />                                        
+
+        
+
+        <copy file="./media/images/traffic/icon.png" tofile="${build}/skins/traffic/icon.png" />                
+
+        <copy file="./media/images/traffic/incident.png" tofile="${build}/skins/traffic/incident.png" />        
+
+        <copy file="./media/images/traffic/construction.png" tofile="${build}/skins/traffic/construction.png" />                
+
+        <copy file="./media/images/traffic/folder.png" tofile="${build}/skins/traffic/folder.png" />                
+
+        <copy file="./media/images/traffic/background.jpg" tofile="${build}/skins/traffic/background.jpg" />                                                
+
+        
+
+        <copy file="./media/images/menu/icon.png" tofile="${build}/skins/menu/icon.png" />                
+
+        <copy file="./media/images/menu/icon.png" tofile="${build}/skins/menu/folder.png" />                
+
+        <copy file="./media/images/menu/background.jpg" tofile="${build}/skins/menu/background.jpg" />                                                        
+
+
+
+        <copy file="./media/images/jabber/icon.png" tofile="${build}/skins/jabber/icon.png" />                
+
+        <copy file="./media/images/jabber/background.jpg" tofile="${build}/skins/jabber/background.jpg" />                                                        
+
+        <copy file="./media/images/jabber/offline.png" tofile="${build}/skins/jabber/offline.png" />                
+
+        <copy file="./media/images/jabber/online.png" tofile="${build}/skins/jabber/online.png" />                
+
+        <copy file="./media/images/jabber/message.png" tofile="${build}/skins/jabber/message.png" />                
+
+        <copy file="./media/images/jabber/donotdisturb.png" tofile="${build}/skins/jabber/donotdisturb.png" />                
+
+
+
+
+
+        <copy file="./skins/skin.xml" tofile="${build}/skins/skin.xml" />        
+
+        <copy file="./skins/Readme.txt" tofile="${build}/skins/Readme.txt" />                
+
+        <zip destfile="${build}/skins/galleon.gln" basedir="${build}/skins" compress="yes"/>
+
+        <copy file="${build}/skins/galleon.gln" tofile="./skins/galleon.gln" />                                
+
+
+
+
+
+        <delete dir="${build}/skins/music" />
+
+        <delete dir="${build}/skins/photos" />        
+
+        <delete dir="${build}/skins/shoutcast" />        
+
+        <delete dir="${build}/skins/togo" />                
+
+        <delete dir="${build}/skins/weather" />                
+
+        <delete dir="${build}/skins/rss" />                        
+
+        <delete dir="${build}/skins/musicOrganizer" />                                
+
+        <delete dir="${build}/skins/desktop" />                                        
+
+        <delete dir="${build}/skins/email" />                                                        
+
+        <delete dir="${build}/skins/playlists" />                                                                
+
+        <delete dir="${build}/skins/internet" />                                                                        
+
+<!--
+
+        <delete dir="${build}/skins/audioScrobbler" />
+
+-->        
+
+        <delete dir="${build}/skins/podcasting" />
+
+        <delete dir="${build}/skins/iTunes" />
+
+        <delete dir="${build}/skins/movies" />        
+
+        <delete dir="${build}/skins/videocasting" />        
+
+        <delete dir="${build}/skins/internetSlideshows" />                
+
+        <delete dir="${build}/skins/upcoming" />                        
+
+        <delete dir="${build}/skins/jukebox" />                                
+
+        <delete dir="${build}/skins/traffic" />                                        
+
+        <delete dir="${build}/skins/menu" />                                                
+
+        <delete dir="${build}/skins/jabber" />                                                
+
+        <delete file="${build}/skins/skin.xml" />                        
+
+        <delete file="${build}/skins/Readme.txt" />                                
+
+        
+
+<!-- TiVo Skin -->        
+
+        <echo>Creating TiVo skin</echo>
+
+        <copy file="./media/images/busy2.gif" tofile="${build}/skins/music/busy.gif" />                                
+
+        <copy file="./media/images/star.png" tofile="${build}/skins/music/star.png" />                                        
+
+
+
+        <copy file="./media/images/music/icon.png" tofile="${build}/skins/music/icon.png" />        
+
+        <copy file="./media/images/music/folder.png" tofile="${build}/skins/music/folder.png" />                
+
+        <copy file="./media/images/music/cd.png" tofile="${build}/skins/music/cd.png" />                
+
+        <copy file="./media/images/music/playlist.png" tofile="${build}/skins/music/playlist.png" />                        
+
+        <copy file="./media/images/tivo/blue.mpg" tofile="${build}/skins/music/background.mpg" />
+
+
+
+        <copy file="./media/images/photos/icon.png" tofile="${build}/skins/photos/icon.png" />        
+
+        <copy file="./media/images/photos/folder.png" tofile="${build}/skins/photos/folder.png" />        
+
+        <copy file="./media/images/photos/folder_red_open.png" tofile="${build}/skins/photos/folder_red_open.png" />        
+
+        <copy file="./media/images/tivo/burgundy.mpg" tofile="${build}/skins/photos/background.mpg" />        
+
+        
+
+        <copy file="./media/images/togo/background.jpg" tofile="${build}/skins/togo/background.jpg" />
+
+        <copy file="./media/images/togo/icon.png" tofile="${build}/skins/togo/icon.png" />                
+
+        <copy file="./media/images/togo/yellowball.png" tofile="${build}/skins/togo/yellowball.png" />                
+
+        <copy file="./media/images/togo/yellowball!.png" tofile="${build}/skins/togo/yellowball!.png" />                        
+
+        <copy file="./media/images/togo/greenball.png" tofile="${build}/skins/togo/greenball.png" />                                        
+
+        <copy file="./media/images/togo/redball.png" tofile="${build}/skins/togo/redball.png" />                                                
+
+        <copy file="./media/images/togo/blueball.png" tofile="${build}/skins/togo/blueball.png" />                                                        
+
+        <copy file="./media/images/togo/empty.png" tofile="${build}/skins/togo/empty.png" />                                                                
+
+        <copy file="./media/images/togo/lock.png" tofile="${build}/skins/togo/lock.png" />                                                                        
+
+        <copy file="./media/images/tivo/blue.mpg" tofile="${build}/skins/togo/background.mpg" />        
+
+        
+
+        <copy file="./media/images/tivo/blue.mpg" tofile="${build}/skins/weather/background.mpg" />
+
+        <copy todir="${build}/skins/weather/">
+
+            <fileset dir="./media/images/weather" includes="*.png" />
+
+        </copy>        
+
+
+
+        <copy file="./media/images/shoutcast/icon.png" tofile="${build}/skins/shoutcast/icon.png" />        
+
+        <copy file="./media/images/shoutcast/folder.png" tofile="${build}/skins/shoutcast/folder.png" />                
+
+        <copy file="./media/images/shoutcast/station.png" tofile="${build}/skins/shoutcast/station.png" />                
+
+        <copy file="./media/images/tivo/orange.mpg" tofile="${build}/skins/shoutcast/background.mpg" />
+
+        
+
+        <copy file="./media/images/musicOrganizer/icon.png" tofile="${build}/skins/musicOrganizer/icon.png" />        
+
+        <copy file="./media/images/musicOrganizer/folder.png" tofile="${build}/skins/musicOrganizer/folder.png" />                
+
+        <copy file="./media/images/musicOrganizer/cd.png" tofile="${build}/skins/musicOrganizer/cd.png" />                
+
+        <copy file="./media/images/tivo/burgundy.mpg" tofile="${build}/skins/musicOrganizer/background.mpg" />
+
+        
+
+        <copy file="./media/images/rss/icon.png" tofile="${build}/skins/rss/icon.png" />        
+
+        <copy file="./media/images/rss/folder.png" tofile="${build}/skins/rss/folder.png" />                
+
+        <copy file="./media/images/rss/item.png" tofile="${build}/skins/rss/item.png" />                
+
+        <copy file="./media/images/tivo/purple.mpg" tofile="${build}/skins/rss/background.mpg" />
+
+        
+
+        <copy file="./media/images/desktop/icon.png" tofile="${build}/skins/desktop/icon.png" />        
+
+        
+
+        <copy file="./media/images/email/icon.png" tofile="${build}/skins/email/icon.png" />                
+
+        <copy file="./media/images/tivo/purple.mpg" tofile="${build}/skins/email/background.mpg" />
+
+        <copy file="./media/images/email/folder.png" tofile="${build}/skins/email/folder.png" />
+
+        
+
+        <copy file="./media/images/internet/icon.png" tofile="${build}/skins/internet/icon.png" />                
+
+        <copy file="./media/images/tivo/blue.mpg" tofile="${build}/skins/internet/background.mpg" />
+
+        
+
+        <copy file="./media/images/playlists/icon.png" tofile="${build}/skins/playlists/icon.png" />                
+
+        <copy file="./media/images/tivo/orange.mpg" tofile="${build}/skins/playlists/background.mpg" />
+
+        <copy file="./media/images/playlists/playlist.png" tofile="${build}/skins/playlists/playlist.png" />                                
+
+        
+
+        
+
+<!--
+
+        <copy file="./media/images/audioScrobbler/icon.png" tofile="${build}/skins/audioScrobbler/icon.png" />                
+
+        <copy file="./media/images/tivo/blue.mpg" tofile="${build}/skins/audioScrobbler/background.mpg" />
+
+        <copy file="./media/images/audioScrobbler/item.png" tofile="${build}/skins/audioScrobbler/item.png" />
+
+-->
+
+        <copy file="./media/images/podcasting/icon.png" tofile="${build}/skins/podcasting/icon.png" />        
+
+        <copy file="./media/images/podcasting/folder.png" tofile="${build}/skins/podcasting/folder.png" />                
+
+        <copy file="./media/images/podcasting/item.png" tofile="${build}/skins/podcasting/item.png" />                
+
+        <copy file="./media/images/tivo/purple.mpg" tofile="${build}/skins/podcasting/background.mpg" />
+
+        
+
+        <copy file="./media/images/iTunes/icon.png" tofile="${build}/skins/iTunes/icon.png" />        
+
+        <copy file="./media/images/iTunes/folder.png" tofile="${build}/skins/iTunes/folder.png" />                
+
+        <copy file="./media/images/iTunes/item.png" tofile="${build}/skins/iTunes/item.png" />                
+
+        <copy file="./media/images/tivo/blue.mpg" tofile="${build}/skins/iTunes/background.mpg" />
+
+        
+
+        <copy file="./media/images/movies/icon.png" tofile="${build}/skins/movies/icon.png" />        
+
+        <copy file="./media/images/movies/folder.png" tofile="${build}/skins/movies/folder.png" />                
+
+        <copy file="./media/images/movies/item.png" tofile="${build}/skins/movies/item.png" />                
+
+        <copy file="./media/images/movies/favorite.png" tofile="${build}/skins/movies/favorite.png" />                        
+
+        <copy file="./media/images/tivo/blue.mpg" tofile="${build}/skins/movies/background.mpg" />        
+
+        
+
+        <copy file="./media/images/videocasting/icon.png" tofile="${build}/skins/videocasting/icon.png" />        
+
+        <copy file="./media/images/videocasting/folder.png" tofile="${build}/skins/videocasting/folder.png" />                
+
+        <copy file="./media/images/videocasting/item.png" tofile="${build}/skins/videocasting/item.png" />                
+
+        <copy file="./media/images/tivo/blue.mpg" tofile="${build}/skins/videocasting/background.mpg" />        
+
+
+
+        <copy file="./media/images/internetSlideshows/icon.png" tofile="${build}/skins/internetSlideshows/icon.png" />        
+
+        <copy file="./media/images/internetSlideshows/folder.png" tofile="${build}/skins/internetSlideshows/folder.png" />                
+
+        <copy file="./media/images/internetSlideshows/item.png" tofile="${build}/skins/internetSlideshows/item.png" />                
+
+        <copy file="./media/images/tivo/burgundy.mpg" tofile="${build}/skins/internetSlideshows/background.mpg" />        
+
+        
+
+        <copy file="./media/images/upcoming/icon.png" tofile="${build}/skins/upcoming/icon.png" />        
+
+        <copy file="./media/images/upcoming/folder.png" tofile="${build}/skins/upcoming/folder.png" />                
+
+        <copy file="./media/images/upcoming/item.png" tofile="${build}/skins/upcoming/item.png" />                
+
+        <copy file="./media/images/tivo/burgundy.mpg" tofile="${build}/skins/upcoming/background.mpg" />                
+
+        
+
+        <copy file="./media/images/jukebox/icon.png" tofile="${build}/skins/jukebox/icon.png" />        
+
+        <copy file="./media/images/jukebox/folder.png" tofile="${build}/skins/jukebox/folder.png" />                
+
+        <copy file="./media/images/jukebox/item.png" tofile="${build}/skins/jukebox/item.png" />                
+
+        <copy file="./media/images/tivo/burgundy.mpg" tofile="${build}/skins/jukebox/background.mpg" />                        
+
+        
+
+        <copy file="./media/images/traffic/icon.png" tofile="${build}/skins/traffic/icon.png" />        
+
+        <copy file="./media/images/traffic/folder.png" tofile="${build}/skins/traffic/folder.png" />                
+
+        <copy file="./media/images/traffic/incident.png" tofile="${build}/skins/traffic/incident.png" />                
+
+        <copy file="./media/images/traffic/construction.png" tofile="${build}/skins/traffic/construction.png" />                
+
+        <copy file="./media/images/tivo/blue.mpg" tofile="${build}/skins/traffic/background.mpg" />                                
+
+        
+
+        <copy file="./media/images/menu/icon.png" tofile="${build}/skins/menu/icon.png" />        
+
+        <copy file="./media/images/menu/icon.png" tofile="${build}/skins/menu/folder.png" />                
+
+        <copy file="./media/images/tivo/blue.mpg" tofile="${build}/skins/menu/background.mpg" />                                        
+
+
+
+        <copy file="./media/images/jabber/icon.png" tofile="${build}/skins/jabber/icon.png" />        
+
+        <copy file="./media/images/tivo/blue.mpg" tofile="${build}/skins/menu/background.mpg" />                                        
+
+        <copy file="./media/images/jabber/offline.png" tofile="${build}/skins/jabber/offline.png" />                
+
+        <copy file="./media/images/jabber/online.png" tofile="${build}/skins/jabber/online.png" />
+
+        <copy file="./media/images/jabber/message.png" tofile="${build}/skins/jabber/message.png" />
+
+        <copy file="./media/images/jabber/donotdisturb.png" tofile="${build}/skins/jabber/donotdisturb.png" />                
+
+
+
+        <copy file="./skins/tivoskin.xml" tofile="${build}/skins/skin.xml" />        
+
+        <copy file="./skins/Readme.txt" tofile="${build}/skins/Readme.txt" />                
+
+        <zip destfile="${build}/skins/tivo.gln" basedir="${build}/skins" compress="yes"/>
+
+        <copy file="${build}/skins/tivo.gln" tofile="./skins/tivo.gln" />                                
+
+
+
+
+
+        <delete dir="${build}/skins/music" />
+
+        <delete dir="${build}/skins/photos" />        
+
+        <delete dir="${build}/skins/shoutcast" />        
+
+        <delete dir="${build}/skins/togo" />                
+
+        <delete dir="${build}/skins/weather" />                
+
+        <delete dir="${build}/skins/rss" />                        
+
+        <delete dir="${build}/skins/musicOrganizer" />                                
+
+        <delete dir="${build}/skins/desktop" />                                        
+
+        <delete dir="${build}/skins/email" />                                                        
+
+        <delete dir="${build}/skins/playlists" />                                                                
+
+        <delete dir="${build}/skins/internet" />                                                                        
+
+<!--
+
+        <delete dir="${build}/skins/audioScrobbler" />
+
+-->        
+
+        <delete dir="${build}/skins/podcasting" />
+
+        <delete dir="${build}/skins/iTunes" />
+
+        <delete dir="${build}/skins/movies" />        
+
+        <delete dir="${build}/skins/videocasting" />        
+
+        <delete dir="${build}/skins/internetSlideshows" />                
+
+        <delete dir="${build}/skins/upcoming" />                        
+
+        <delete dir="${build}/skins/jukebox" />                                
+
+        <delete dir="${build}/skins/traffic" />                                        
+
+        <delete dir="${build}/skins/menu" />                                                
+
+        <delete dir="${build}/skins/jabber" />                                                
+
+        <delete file="${build}/skins/skin.xml" />                        
+
+        <delete file="${build}/skins/Readme.txt" />                                        
+
+    </target>
+
+    
+
+    <target name="combinejars">    
+
+        <mkdir dir="${build}/combined-${jarfile}" />        
+
+
+
+        <unjar dest="${build}/combined-${jarfile}">
+
+          <fileset dir="./lib" includes="${fileset}"/>
+
+        </unjar>    
+
+        
+
+        <jar jarfile="${build}/lib/${jarfile}" compress="yes">
+
+            <fileset dir="${build}/combined-${jarfile}"/>
+
+        </jar>
+
+        
+
+        <delete dir="${build}/combined-${jarfile}" />    
+
+    </target>
+
+
+
+    <target name="package" depends="clean,build.library">
+
+        <echo>Packaging build</echo>
+
+
+
+        <antcall target="package-lib" />
+
+        <antcall target="package-bin-${platform}" />
+
+        <antcall target="package-docs" />
+
+        <antcall target="package-images" />
+
+        <antcall target="package-plugins" />
+
+
+
+        <echo>Copying configuration</echo>
+
+        <copy file="./conf/wrapper.conf" tofile="${build}/conf/wrapper.conf" filtering="true" />
+
+        <copy file="./conf/log4j.xml.default" tofile="${build}/conf/log4j.xml" filtering="true" />
+
+        <copy file="./conf/configure.xml.default" tofile="${build}/conf/configure.xml" />
+
+        <copy file="./conf/derby.properties" tofile="${build}/conf/derby.properties" />        
+
+        <copy file="./conf/hibernate.properties" tofile="${build}/conf/hibernate.properties" />                
+
+        <copy file="./conf/ehcache.xml" tofile="${build}/conf/ehcache.xml" />                        
+
+
+
+        <antcall target="package-misc-${platform}" />
+
+
+
+    </target>
+
+
+
+    <target name="package-lib">
+
+        <echo>Combining libraries</echo>
+
+
+
+        <antcall target="combinejars">
+
+          <param name="fileset" value="**/commons*.jar"/>
+
+          <param name="jarfile" value="commons.jar"/>          
+
+        </antcall>        
+
+
+
+        
+
+        <antcall target="combinejars">
+
+          <param name="fileset" value="**/hibernate*.jar,**/ehcache.jar,**/jdbc2_0-stdext.jar,**/jta.jar,**/odmg.jar,**/cglib-full.jar"/>          
+
+          <param name="jarfile" value="hibernate.jar"/>          
+
+        </antcall>                
+
+
+
+        <antcall target="combinejars">
+
+          <param name="fileset" value="**/derby*.jar"/>
+
+          <param name="jarfile" value="derby.jar"/>          
+
+        </antcall>                        
+
+        
+
+        <antcall target="combinejars">
+
+          <param name="fileset" value="**/jax*.jar"/>
+
+          <param name="jarfile" value="jax.jar"/>          
+
+        </antcall>                                
+
+        
+
+        <antcall target="combinejars">
+
+          <param name="fileset" value="**/jl.jar,**/mp3spi.jar,**/tritonus_share.jar"/>
+
+          <param name="jarfile" value="javazoom.jar"/>          
+
+        </antcall>                                        
+
+        
+
+        <antcall target="combinejars">
+
+          <param name="fileset" value="**/smack.jar,**/smackx.jar"/>
+
+          <param name="jarfile" value="smack.jar"/>          
+
+        </antcall>                                                
+
+
+
+        <antcall target="combinejars">
+
+          <param name="fileset" value="**/forms.jar,**/looks.jar"/>
+
+          <param name="jarfile" value="forms.jar"/>          
+
+        </antcall>                                                
+
+        
+
+        <echo>Copying libraries</echo>
+
+        <copy todir="${build}/lib/">
+
+            <fileset dir="./lib" includes="**/*.jar" excludes="**/commons*.jar,**/hibernate*.jar,**/ehcache.jar,**/jdbc2_0-stdext.jar,**/jta.jar,**/odmg.jar,**/cglib-full.jar,**/derby*.jar,**/jax*.jar,**/jl.jar,**/mp3spi.jar,**/tritonus_share.jar,**/forms.jar,**/looks.jar,**/smack.jar,**/smackx.jar"/>
+
+        </copy>        
+
+
+
+        <antcall target="package-lib-${platform}" />
+
+    </target>
+
+
+
+    <target name="package-lib-win32">
+
+        <copy file="./lib/win32/jshortcut.dll" tofile="${build}/lib/jshortcut.dll" />
+
+        <copy file="./lib/win32/Wrapper.dll" tofile="${build}/lib/Wrapper.dll" />
+
+        <copy file="./lib/jawin.jar" tofile="${build}/lib/jawin.jar" />
+
+        <copy file="./lib/win32/jawin.dll" tofile="${build}/lib/jawin.dll" />
+
+        <copy file="./lib/win32/TiVoBeacon.exe" tofile="${build}/lib/TiVoBeacon.exe" />
+
+        <copy file="./lib/win32/TiVoBeaconApi.dll" tofile="${build}/lib/TiVoBeaconApi.dll" />
+
+    </target>
+
+
+
+    <target name="package-bin-win32">
+
+        <echo>Copying executables</echo>
+
+        <copy file="./bin/win32/Wrapper.exe" tofile="${build}/bin/Wrapper.exe" />
+
+        <copy file="./bin/win32/install.cmd" tofile="${build}/bin/install.cmd" />
+
+        <copy file="./bin/win32/uninstall.cmd" tofile="${build}/bin/uninstall.cmd" />
+
+        <copy file="./bin/win32/run.cmd" tofile="${build}/bin/run.cmd" />
+
+        <copy file="./bin/win32/gui.cmd" tofile="${build}/bin/gui.cmd" />        
+
+        <!--copy file="./bin/win32/ffmpeg.exe" tofile="${build}/bin/ffmpeg.exe" /-->                
+
+    </target>
+
+
+
+    <target name="package-misc-win32">
+
+        <copy todir="${build}/media">
+
+          <fileset dir="./media">
+
+            <include name="**/*.wsz"/>
+
+          </fileset>
+
+        </copy>     
+
+    </target>
+
+
+
+    <target name="package-lib-osx">
+
+        <copy file="./lib/osx/libwrapper.jnilib" tofile="${build}/lib/libwrapper.jnilib" />
+
+        <copy file="./lib/osx/font.properties.Mac OS X" tofile="${build}/lib/font.properties.Mac OS X" />
+
+    </target>
+
+
+
+    <target name="package-bin-osx">
+
+        <echo>Copying executables</echo>
+
+        <copy file="./bin/osx/galleon" tofile="${build}/bin/galleon" />
+
+        <copy file="./bin/osx/realpath" tofile="${build}/bin/realpath" />
+
+        <copy file="./bin/osx/wrapper" tofile="${build}/bin/wrapper" />
+
+        <echo>Fixing permissions</echo>
+
+        <chmod file="${build}/bin/galleonctl" perm="a+rx" />
+
+        <chmod file="${build}/bin/realpath" perm="a+rx" />
+
+        <chmod file="${build}/bin/wrapper" perm="a+rx" />
+
+    </target>
+
+
+
+    <target name="package-misc-osx">
+
+        <echo>Copying Miscellaneous Items</echo>
+
+        <mkdir dir="${miscdir}" />
+
+        <copy file="./bin/osx/startup/StartupParameters.plist" tofile="${miscdir}/StartupParameters.plist" />
+
+        <copy file="./bin/osx/startup/galleon" tofile="${miscdir}/galleon" />
+
+        <chmod file="${miscdir}/galleon" perm="a+rx" />
+
+    </target>
+
+
+
+    <target name="package-lib-unix">
+
+        <copy file="./lib/unix/libwrapper.so" tofile="${build}/lib/libwrapper.so" />
+
+        <copy file="./lib/pja.jar" tofile="${build}/lib/pja.jar" />        
+
+    </target>
+
+
+
+    <target name="package-bin-unix">
+
+        <echo>Copying executables</echo>
+
+        <!--copy file="./bin/unix/bash.script" tofile="${build}/bin/bash.script" filtering="true" />
+
+        <copy file="./bin/unix/sh.script" tofile="${build}/bin/sh.script" />
+
+        <copy file="./bin/unix/Realpath" tofile="${build}/bin/Realpath" />
+
+        <copy file="./bin/unix/Wrapper" tofile="${build}/bin/Wrapper" />
+
+        <copy file="./bin/unix/Galleon" tofile="${build}/bin/Galleon" /-->
+
+        <copy file="./bin/unix/run.sh" tofile="${build}/bin/run.sh" />        
+
+        <copy file="./bin/unix/gui.sh" tofile="${build}/bin/gui.sh" />                
+
+        <chmod file="${build}/bin/*" perm="a+rx" />        
+
+    </target>
+
+
+
+    <target name="package-misc-unix">
+
+    </target>
+
+
+
+    <target name="package-images">
+
+        <echo>Copying images</echo>
+
+        <mkdir dir="${build}/media/images" />
+
+        <copy todir="${build}/media/images">
+
+            <fileset dir="./media/images" includes="couldnotconnect.mp3,galleon.ico" />
+
+        </copy>
+
+    </target>
+
+
+
+    <target name="package-docs">
+
+        <echo>Copying documentation</echo>
+
+        <copy file="./Readme.txt" tofile="${build}/Readme.txt" />
+
+        <copy file="./copying" tofile="${build}/copying" />
+
+        <copy file="./ThirdPartyLicenses.txt" tofile="${build}/ThirdPartyLicenses.txt" />
+
+    </target>
+
+
+
+    <target name="package-plugins">
+
+        <echo>Copying plugins</echo>
+
+    </target>
+
+
+
+    <target name="source" depends="init,clean,package-images,package-docs">
+
+        <echo>Copying Java source files</echo>
+
+        <mkdir dir="${build}/src" />
+
+        <copy todir="${build}/src">
+
+            <fileset dir="./src" includes="**/*.java,**/*.html,**/*.xml" excludes="**/galleon/test*.java"/>
+
+        </copy>
+
+
+
+        <echo>Copying build files</echo>
+
+        <copy file="./build.xml" tofile="${build}/build.xml" />
+
+        <copy file="./osx.properties" tofile="${build}/osx.properties" />
+
+        <copy file="./unix.properties" tofile="${build}/unix.properties" />
+
+        <copy file="./win32.properties" tofile="${build}/win32.properties" />
+
+        <copy file="./ReleaseNotes.txt" tofile="${build}/ReleaseNotes.txt" />
+
+        <copy file="./Developers.txt" tofile="${build}/Developers.txt" />        
+
+        <!--copy file="./conf/configure.xml" tofile="${build}/conf/configure.xml" /-->
+
+        <copy file="./conf/configure.xml.default" tofile="${build}/conf/configure.xml.default" />
+
+        <copy file="./conf/log4j.xml" tofile="${build}/conf/log4j.xml" filtering="false" overwrite="yes" />
+
+        <copy file="./conf/log4j.xml.default" tofile="${build}/conf/log4j.xml.default" filtering="false" overwrite="yes" />
+
+        <copy file="./conf/wrapper.conf" tofile="${build}/conf/wrapper.conf" filtering="false" overwrite="yes" />
+
+        <copy file="./conf/weathertypes.dat" tofile="${build}/conf/weathertypes.dat" />
+
+        <copy file="./conf/derby.properties" tofile="${build}/conf/derby.properties" />        
+
+        <copy file="./conf/hibernate.properties" tofile="${build}/conf/hibernate.properties" />                
+
+        <copy file="./conf/ehcache.xml" tofile="${build}/conf/ehcache.xml" />                        
+
+
+
+        <echo>Copying executables</echo>
+
+        <mkdir dir="${build}/bin/osx" />
+
+        <copy todir="${build}/bin/osx">
+
+            <fileset dir="./bin/osx" />
+
+        </copy>
+
+        <mkdir dir="${build}/bin/unix" />
+
+        <copy todir="${build}/bin/unix">
+
+            <fileset dir="./bin/unix" />
+
+        </copy>
+
+        <mkdir dir="${build}/bin/win32" />
+
+        <copy todir="${build}/bin/win32">
+
+            <fileset dir="./bin/win32" />
+
+        </copy>
+
+
+
+        <echo>Copying distribution files</echo>
+
+        <mkdir dir="${build}/distro/osx" />
+
+        <copy todir="${build}/distro/osx">
+
+            <fileset dir="./distro/osx" />
+
+        </copy>
+
+        <mkdir dir="${build}/distro/unix" />
+
+        <copy todir="${build}/distro/unix">
+
+            <fileset dir="./distro/unix" />
+
+        </copy>
+
+        <mkdir dir="${build}/distro/win32" />
+
+        <copy todir="${build}/distro/win32">
+
+            <fileset dir="./distro/win32" />
+
+        </copy>
+
+
+
+        <echo>Copying libraries</echo>
+
+        <mkdir dir="${build}/lib" />
+
+        <copy todir="${build}/lib">
+
+            <fileset dir="./lib"/>
+
+        </copy>
+
+
+
+        <echo>Copying Doc files</echo>
+
+        <copy todir="${build}/doc">
+
+            <fileset dir="./doc" includes="**/*.html" />
+
+        </copy>        
+
+        
+
+        <echo>Copying images</echo>
+
+        <mkdir dir="${build}/media/images" />
+
+        <copy todir="${build}/media/images">
+
+            <fileset dir="./media/images" includes="**/*.mp3,**/*.jpg,**/*.png,**/*.gif,**/*.ico,**/*.mpg" />
+
+        </copy>        
+
+        
+
+        <echo>Copying fonts</echo>
+
+        <mkdir dir="${build}/media/fonts" />
+
+        <copy todir="${build}/media/fonts">
+
+            <fileset dir="./media/fonts" includes="**/Dekadens.ttf,**/FreeSans.ttf" />
+
+        </copy>                
+
+        
+
+        <echo>Copying sounds</echo>
+
+        <mkdir dir="${build}/media/sounds" />
+
+        <copy todir="${build}/media/sounds">
+
+            <fileset dir="./media/sounds" includes="**/*.mp3" />
+
+        </copy>                
+
+        
+
+        <copy file="./apps/launcher.txt" tofile="${build}/apps/launcher.txt" />                                
+
+        
+
+        <copy file="./skins/skin.xml" tofile="${build}/skins/skin.xml" />                                        
+
+        <copy file="./skins/tivoskin.xml" tofile="${build}/skins/tivoskin.xml" />
+
+        <copy file="./skins/Readme.txt" tofile="${build}/skins/Readme.txt" />                                                
+
+
+
+    </target>
+
+</project>
+

@@ -1,0 +1,16 @@
+#!/bin/sh
+
+# Verify that the JAI package exists before installing.
+# JAI assumes you have 10.3.1 already.
+
+RETVAL=0
+VOLUME=$4
+
+# If JAI package receipt exists, return 112 (96+16)
+# (96 = exit ; 16 = error message in InstallationCheck.strings)
+#
+if [ ! -d "$VOLUME/Library/Receipts/JavaAdvancedImaging.pkg" ] ; then
+   RETVAL=112
+fi
+
+exit $RETVAL

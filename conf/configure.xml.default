@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration version="2.3.0">
+
+<server title="Galleon" reload="60" shuffleItems="true" generateThumbnails="false"/>
+
+</configuration>
+

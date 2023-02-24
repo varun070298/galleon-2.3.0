@@ -1,0 +1,228 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+	"-//Hibernate/Hibernate Mapping DTD 2.0//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
+
+<hibernate-mapping>
+
+  <class name="org.lnicholls.galleon.database.Videocast" table="VIDEOCAST" schema="GALLEON">
+    <meta attribute="class-description">
+Auto-generated using Hibernate hbm2java tool.
+
+Copyright (C) 2005, 2006 Leon Nicholls
+
+This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later
+version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with this program; if not, write to the Free
+Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+See the file "COPYING" for more details.
+    </meta>
+
+  <meta attribute="class-code">
+    public String getStatusString() {
+        switch (status) {
+        case 1:
+            return "Subscribed";
+        case 2:
+            return "Deleted";
+        case 3:
+            return "Error";
+        }
+        return "Not subscribed";
+    }
+
+    public VideocastTrack getTrack(String url)
+    {
+      if (getTracks()!=null)
+      {
+        for (java.util.Iterator j = getTracks().iterator(); j.hasNext(); /* Nothing */) {
+            VideocastTrack track = (VideocastTrack) j.next();
+            if (track.getUrl().equals(url))
+                return track;
+        }
+      }
+      return null;
+    }
+
+
+    public static int STATUS_SUBSCRIBED = 1;
+
+    public static int STATUS_DELETED = 2;
+
+    public static int STATUS_ERROR = 3;
+
+  </meta>
+
+    <!--cache usage="read-write"/-->
+
+    <id name="id" type="int" column="ID">
+      <meta attribute="scope-set">protected</meta>
+      <generator class="native"/>
+    </id>
+
+    <property name="title" type="string" not-null="true">
+      <column name="title" index="VIDEOCAST_TITLE"/>
+    </property>
+
+    <property name="link" type="string" length="1024"/>
+
+    <property name="author" type="string"/>
+
+    <property name="description" type="string" length="4096"/>
+
+    <property name="subtitle" type="string" length="4096"/>
+
+    <property name="summary" type="string" length="4096"/>
+
+    <property name="category" type="string"/>
+
+    <property name="image" type="string" length="1024"/>
+
+    <property name="explicit" type="boolean"/>
+
+    <property name="block" type="boolean"/>
+
+    <property name="keywords" type="string"/>
+
+    <property name="status" type="int" not-null="true"/>
+
+    <property name="dateUpdated" type="timestamp"/>
+
+    <property name="path" type="string" not-null="true" length="1024">
+      <column name="path" index="VIDEOCAST_PATH"/>
+    </property>
+
+    <property name="rating" type="int" not-null="true">
+      <column name="rating" index="VIDEOCAST_RATING"/>
+    </property>
+
+    <property name="origen" type="string" length="30"/>
+
+    <property name="externalId" type="string">
+          <column name="externalId" index="VIDEOCAST_EXTERNAL"/>
+    </property>
+
+    <property name="ttl" type="int"/>
+
+    <list name="tracks" table="VIDEOCAST_TRACKS" cascade="all">
+      <key column="VIDEOCAST_ID"/>
+      <index column="TRACK"/>
+      <composite-element class="org.lnicholls.galleon.database.VideocastTrack">
+
+  <meta attribute="class-code">
+    public boolean equals(Object object)
+    {
+        VideocastTrack videocastTrack = (VideocastTrack)object;
+        return url.equals(videocastTrack.url);
+    }
+
+    public String getStatusString() {
+        switch (status) {
+        case 1:
+            return "Downloading";
+        case 2:
+            return "Downloaded";
+        case 4:
+            return "Queued";
+        case 8:
+            return "Download Cancelled";
+        case 16:
+            return "Download Error";
+        case 32:
+            return "Deleted";
+        case 64:
+            return "Played";
+        }
+        return "Not downloaded";
+    }
+
+    public static int STATUS_DOWNLOADING = 1;
+
+    public static int STATUS_DOWNLOADED = 2;
+
+    public static int STATUS_QUEUED = 4;
+
+    public static int STATUS_DOWNLOAD_CANCELLED = 8;
+
+    public static int STATUS_DOWNLOAD_ERROR = 16;
+
+    public static int STATUS_DELETED = 32;
+
+    public static int STATUS_PLAYED = 64;
+
+  </meta>
+
+
+        <many-to-one name="track" class="org.lnicholls.galleon.database.Video" cascade="all">
+          <column name="VIDEO_ID"/>
+        </many-to-one>
+
+    <property name="title" type="string" not-null="true">
+      <column name="title" index="VIDEOCAST_T_TITLE"/>
+    </property>
+
+    <property name="link" type="string" length="1024"/>
+
+    <property name="guid" type="string"/>
+
+    <property name="description" type="string" length="4096"/>
+
+    <property name="summary" type="string" length="4096"/>
+
+    <property name="subtitle" type="string" length="4096"/>
+
+    <property name="category" type="string"/>
+
+    <property name="keywords" type="string"/>
+
+    <property name="explicit" type="boolean"/>
+
+    <property name="block" type="boolean"/>
+
+    <property name="author" type="string"/>
+
+    <property name="publicationDate" type="timestamp"/>
+
+    <property name="url" type="string" not-null="true" length="1024">
+      <column name="url" index="VIDEOCAST_T_URL"/>
+    </property>
+
+    <property name="mimeType" type="string" not-null="true" length="50"/>
+
+    <property name="size" type="long" not-null="true"/>
+
+    <property name="status" type="int" not-null="true"/>
+
+    <property name="duration" type="long"/>
+
+    <property name="rating" type="int">
+      <column name="rating" index="VIDEOCAST_T_RATING"/>
+    </property>
+
+    <property name="downloadTime" type="int" not-null="true">
+      <meta attribute="field-description">Download time in seconds</meta>
+    </property>
+    <property name="downloadSize" type="long" not-null="true">
+      <meta attribute="field-description">Download size in bytes</meta>
+    </property>
+
+    <property name="videocast" type="int"/>
+
+	<property name="errors" type="int"/>
+
+      </composite-element>
+
+    </list>
+
+    <property name="datePlayed" type="timestamp"/>
+
+    <property name="playCount" type="int"/>
+  </class>
+
+</hibernate-mapping>

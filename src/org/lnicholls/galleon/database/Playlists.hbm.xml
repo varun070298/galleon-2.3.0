@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+	"-//Hibernate/Hibernate Mapping DTD 2.0//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
+
+<hibernate-mapping>
+
+  <class name="org.lnicholls.galleon.database.Playlists" table="PLAYLISTS" schema="GALLEON">
+    <meta attribute="class-description">
+Auto-generated using Hibernate hbm2java tool.
+
+Copyright (C) 2005 Leon Nicholls
+
+This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later
+version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with this program; if not, write to the Free
+Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+See the file "COPYING" for more details.
+    </meta>
+    
+    <!--cache usage="read-write"/-->
+    
+    <id name="id" type="int" column="ID">
+      <meta attribute="scope-set">protected</meta>
+      <generator class="native"/>
+    </id>
+
+    <property name="title" type="string" not-null="true">
+      <!--meta attribute="finder-method">findByTitle</meta-->
+      <column name="title" index="PLAYLISTS_TITLE"/>
+    </property>
+    
+    <property name="dateModified" type="timestamp">
+      <meta attribute="field-description">When the track was created</meta>
+    </property>    
+    
+    <property name="dateAdded" type="timestamp">
+      <meta attribute="field-description">When the track was added</meta>
+    </property>        
+    
+    <property name="datePlayed" type="timestamp">
+      <meta attribute="field-description">When the track was last played</meta>
+    </property>            
+    
+    <property name="playCount" type="int" not-null="true"/>    
+    
+    <property name="origen" type="string" length="30"/>        
+    
+    <property name="externalId" type="string">            
+          <column name="externalId" index="PLAYLIST_EXTERNAL"/>
+    </property>    
+    
+  </class>
+  
+</hibernate-mapping>

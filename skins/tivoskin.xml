@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- version = version of skin -->
+<!-- galleon = minumum version of Galleon that this skin is compatible with -->
+<skin version="1.0.0" galleon="1.0.0">
+  <!-- skin attributes -->
+  <title>Default</title>
+  <releaseDate>07/01/05</releaseDate>
+  <description>This is the TiVo skin</description>
+  <authorName>Leon Nicholls</authorName>
+  <authorEmail>javahmo@users.sourceforge.net</authorEmail>
+  <authorHomepage>http://galleon.sourceforge.net</authorHomepage>
+
+  <!-- declare images -->
+	<!-- misc images -->
+  <image source="music/busy.gif" id="busy"/>		  
+	<image source="music/star.png" id="star"/>		  	
+	
+  <!-- id = Galleon identifier for app -->
+  <!-- icon = id icon -->  
+  <!-- background = image name for background -->    
+  <app id="org.lnicholls.galleon.apps.music.Music">
+  
+    <!-- 32x32 -->
+    <image source="music/icon.png" id="icon"/>  
+  	<image source="music/cd.png" id="item"/>
+  	<image source="music/folder.png" id="folder"/>	
+  	<image source="music/playlist.png" id="playlist"/>		
+    <!-- max 640x480 -->  
+    <!-- if background is MPG then only one is allowed -->      
+    <image source="music/background.mpg" id="background"/>
+  
+  </app>
+
+
+  <app id="org.lnicholls.galleon.apps.photos.Photos">  
+    <image source="photos/icon.png" id="icon"/>  
+    <image source="photos/folder.png" id="folder"/>
+    <image source="photos/folder_red_open.png" id="gridFolder"/>
+    <image source="photos/camera.png" id="item"/>    
+    <image source="photos/background.mpg" id="background"/>    
+  </app>  
+  
+
+  <app id="org.lnicholls.galleon.apps.togo.ToGo">  
+    <image source="togo/icon.png" id="icon"/>  
+    <image source="togo/background.mpg" id="background"/>    
+    <image source="togo/yellowball.png" id="expiresSoon"/>        
+    <image source="togo/yellowball!.png" id="expired"/>            
+    <image source="togo/greenball.png" id="saveUntilDelete"/>                    
+    <image source="togo/redball.png" id="recording"/>                        
+    <image source="togo/blueball.png" id="suggestion"/>                            
+    <image source="togo/empty.png" id="empty"/>                                
+    <image source="togo/lock.png" id="lock"/>
+  </app>    
+  
+  
+  <app id="org.lnicholls.galleon.apps.weather.Weather">  
+    <image source="weather/icon.png" id="icon"/>  
+    <image source="weather/alerticon.png" id="alert"/>      
+    <image source="weather/icon.png" id="item"/>  
+    <image source="weather/background.mpg" id="background"/>    
+    <image source="weather/00.png" id="00"/>  
+    <image source="weather/01.png" id="01"/>  
+    <image source="weather/02.png" id="02"/>  
+    <image source="weather/03.png" id="03"/>  
+    <image source="weather/04.png" id="04"/>  
+    <image source="weather/05.png" id="05"/>  
+    <image source="weather/06.png" id="06"/>  
+    <image source="weather/07.png" id="07"/>  
+    <image source="weather/08.png" id="08"/>  
+    <image source="weather/09.png" id="09"/>  
+    <image source="weather/10.png" id="10"/>  
+    <image source="weather/11.png" id="11"/>  
+    <image source="weather/12.png" id="12"/>  
+    <image source="weather/13.png" id="13"/>  
+    <image source="weather/14.png" id="14"/>  
+    <image source="weather/15.png" id="15"/>  
+    <image source="weather/16.png" id="16"/>  
+    <image source="weather/17.png" id="17"/>  
+    <image source="weather/18.png" id="18"/>  
+    <image source="weather/19.png" id="19"/>  
+    <image source="weather/20.png" id="20"/>  
+    <image source="weather/21.png" id="21"/>  
+    <image source="weather/22.png" id="22"/>  
+    <image source="weather/23.png" id="23"/>  
+    <image source="weather/24.png" id="24"/>  
+    <image source="weather/25.png" id="25"/>  
+    <image source="weather/26.png" id="26"/>  
+    <image source="weather/27.png" id="27"/>  
+    <image source="weather/28.png" id="28"/>  
+    <image source="weather/29.png" id="29"/>  
+    <image source="weather/30.png" id="30"/>  
+    <image source="weather/31.png" id="31"/>  
+    <image source="weather/32.png" id="32"/>  
+    <image source="weather/33.png" id="33"/>  
+    <image source="weather/34.png" id="34"/>  
+    <image source="weather/35.png" id="35"/>  
+    <image source="weather/36.png" id="36"/>  
+    <image source="weather/37.png" id="37"/>  
+    <image source="weather/38.png" id="38"/>  
+    <image source="weather/39.png" id="39"/>  
+    <image source="weather/40.png" id="40"/>  
+    <image source="weather/41.png" id="41"/>  
+    <image source="weather/42.png" id="42"/>  
+    <image source="weather/43.png" id="43"/>  
+    <image source="weather/44.png" id="44"/>  
+    <image source="weather/45.png" id="45"/>  
+    <image source="weather/46.png" id="46"/>  
+    <image source="weather/47.png" id="47"/>  
+    <image source="weather/NA.png" id="na"/>      
+  </app>      
+  
+
+  <app id="org.lnicholls.galleon.apps.shoutcast.Shoutcast">
+    <image source="shoutcast/icon.png" id="icon"/>  
+  	<image source="shoutcast/station.png" id="item"/>
+  	<image source="shoutcast/folder.png" id="folder"/>	
+    <image source="shoutcast/background.mpg" id="background"/>
+
+    <screen id="player">        
+      <image source="shoutcast/stop.png" id="stop"/>  
+    	<image source="shoutcast/play.png" id="play"/>
+    	<image source="shoutcast/pause.png" id="pause"/>	      
+    	<image source="shoutcast/overlay.png" id="overlay"/>	          	
+    </screen>                  
+  </app>
+  
+
+  <app id="org.lnicholls.galleon.apps.musicOrganizer.MusicOrganizer">
+    <image source="musicOrganizer/icon.png" id="icon"/>  
+  	<image source="musicOrganizer/cd.png" id="item"/>
+  	<image source="musicOrganizer/folder.png" id="folder"/>	
+    <image source="musicOrganizer/background.mpg" id="background"/>
+
+    <screen id="player">        
+      <image source="musicOrganizer/stop.png" id="stop"/>  
+    	<image source="musicOrganizer/play.png" id="play"/>
+    	<image source="musicOrganizer/pause.png" id="pause"/>	      
+    	<image source="musicOrganizer/overlay.png" id="overlay"/>	          	
+    </screen>                  
+  </app>  
+  
+  
+  <app id="org.lnicholls.galleon.apps.rss.RSS">  
+    <image source="rss/icon.png" id="icon"/>  
+    <image source="rss/folder.png" id="folder"/>
+    <image source="rss/item.png" id="item"/>
+    <image source="rss/background.mpg" id="background"/>    
+  </app>    
+  
+  
+  <app id="org.lnicholls.galleon.apps.desktop.Desktop">  
+    <image source="desktop/icon.png" id="icon"/>  
+  </app>      
+  
+  
+  <app id="org.lnicholls.galleon.apps.email.Email">  
+    <image source="email/icon.png" id="icon"/>  
+    <image source="email/alerticon.png" id="alert"/>          
+    <image source="email/background.mpg" id="background"/>        
+    <image source="email/icon.png" id="item"/>    
+    <image source="email/folder.png" id="folder"/>    
+  </app>          
+  
+  
+  <app id="org.lnicholls.galleon.apps.internet.Internet">  
+    <image source="internet/icon.png" id="icon"/>  
+    <image source="internet/background.mpg" id="background"/>        
+    <image source="internet/icon.png" id="item"/>    
+    <image source="internet/icon.png" id="folder"/>    
+  </app>            
+  
+  
+  <app id="org.lnicholls.galleon.apps.playlists.Playlists">  
+    <image source="playlists/icon.png" id="icon"/>  
+    <image source="playlists/background.mpg" id="background"/>        
+    <image source="playlists/playlist.png" id="item"/>    
+  </app>              
+  
+  
+  <app id="org.lnicholls.galleon.apps.podcasting.Podcasting">  
+    <image source="podcasting/icon.png" id="icon"/>  
+  	<image source="podcasting/item.png" id="item"/>
+  	<image source="podcasting/folder.png" id="folder"/>	
+    <image source="podcasting/background.mpg" id="background"/>
+  </app>                  
+  
+
+  <app id="org.lnicholls.galleon.apps.iTunes.iTunes">  
+    <image source="iTunes/icon.png" id="icon"/>  
+  	<image source="iTunes/item.png" id="item"/>
+  	<image source="iTunes/folder.png" id="folder"/>	
+    <image source="iTunes/background.mpg" id="background"/>
+  </app>                  
+  
+  <app id="org.lnicholls.galleon.apps.movies.Movies">  
+    <image source="movies/icon.png" id="icon"/>  
+  	<image source="movies/item.png" id="item"/>
+  	<image source="movies/folder.png" id="folder"/>	
+  	<image source="movies/favorite.png" id="favorite"/>	  	  	
+    <image source="movies/background.mpg" id="background"/>
+  </app>                    
+  
+  <app id="org.lnicholls.galleon.apps.videocasting.Videocasting">  
+    <image source="videocasting/icon.png" id="icon"/>  
+  	<image source="videocasting/item.png" id="item"/>
+  	<image source="videocasting/folder.png" id="folder"/>	
+    <image source="videocasting/background.mpg" id="background"/>
+  </app>                    
+  
+  <app id="org.lnicholls.galleon.apps.internetSlideshows.InternetSlideshows">  
+    <image source="internetSlideshows/icon.png" id="icon"/>  
+  	<image source="internetSlideshows/item.png" id="item"/>
+  	<image source="internetSlideshows/folder.png" id="folder"/>	
+    <image source="internetSlideshows/background.mpg" id="background"/>
+  </app>                      
+  
+  <app id="org.lnicholls.galleon.apps.upcoming.Upcoming">  
+    <image source="upcoming/icon.png" id="icon"/>  
+  	<image source="upcoming/item.png" id="item"/>
+  	<image source="upcoming/folder.png" id="folder"/>	
+    <image source="upcoming/background.mpg" id="background"/>
+  </app>                      
+  
+  <app id="org.lnicholls.galleon.apps.jukebox.Jukebox">  
+    <image source="jukebox/icon.png" id="icon"/>  
+  	<image source="jukebox/item.png" id="item"/>
+  	<image source="jukebox/folder.png" id="folder"/>	
+    <image source="jukebox/background.mpg" id="background"/>
+  </app>                          
+  
+  <app id="org.lnicholls.galleon.apps.traffic.Traffic">  
+    <image source="traffic/icon.png" id="icon"/>  
+  	<image source="traffic/incident.png" id="incident"/>
+  	<image source="traffic/construction.png" id="construction"/>  	
+  	<image source="traffic/folder.png" id="folder"/>	
+    <image source="traffic/background.mpg" id="background"/>
+  </app>                            
+  
+  <app id="org.lnicholls.galleon.apps.menu.Menu">  
+    <image source="menu/icon.png" id="icon"/>  
+  	<image source="menu/folder.png" id="folder"/>	
+    <image source="menu/background.mpg" id="background"/>
+  </app>                              
+
+  <app id="org.lnicholls.galleon.apps.jabber.Jabber">  
+    <image source="jabber/icon.png" id="icon"/>  
+    <image source="jabber/background.mpg" id="background"/>
+    <image source="jabber/offline.png" id="offline"/>  
+    <image source="jabber/online.png" id="online"/>  
+    <image source="jabber/message.png" id="message"/>  
+    <image source="jabber/donotdisturb.png" id="dnd"/>  
+  </app>                      
+
+</skin>

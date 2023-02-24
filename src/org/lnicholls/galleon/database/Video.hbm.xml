@@ -1,0 +1,201 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+	"-//Hibernate/Hibernate Mapping DTD 2.0//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
+
+<hibernate-mapping>
+
+  <class name="org.lnicholls.galleon.database.Video" table="VIDEO" schema="GALLEON">
+    <meta attribute="class-description">
+Auto-generated using Hibernate hbm2java tool.
+
+Copyright (C) 2005, 2006 Leon Nicholls
+
+This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later
+version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with this program; if not, write to the Free
+Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+See the file "COPYING" for more details.
+    </meta>
+    <meta attribute="implements">org.lnicholls.galleon.media.Media</meta>
+
+  <meta attribute="class-code">
+    public boolean equals(Object object)
+    {
+        Video video = (Video)object;
+        if (url!=null &amp;&amp; video.url!=null)
+	        return url.equals(video.url);
+		else
+			return false;
+    }
+
+    public String getStatusString() {
+        switch (status) {
+        case 1:
+            return "Saving";
+        case 2:
+            return "Saved";
+        case 4:
+            return "Rule Matched";
+        case 8:
+            return "Save Cancelled";
+        case 16:
+            return "Recorded";
+        case 32:
+            return "Recording";
+        case 64:
+            return "Save Error";
+        case 128:
+            return "Save Selected";
+        case 256:
+            return "Deleted";
+        }
+        return "Recorded";
+    }
+
+    public static int STATUS_DOWNLOADING = 1;
+
+    public static int STATUS_DOWNLOADED = 2;
+
+    public static int STATUS_RULE_MATCHED = 4;
+
+    public static int STATUS_USER_CANCELLED = 8;
+
+    public static int STATUS_RECORDED = 16;
+
+    public static int STATUS_RECORDING = 32;
+
+    public static int STATUS_INCOMPLETE = 64;
+
+    public static int STATUS_USER_SELECTED = 128;
+
+    public static int STATUS_DELETED = 256;
+
+    public static int RECORDING_AVAILABLE = 1;
+
+    public static int RECORDING_DELETED = 2;
+
+  </meta>
+
+    <!--cache usage="read-write"/-->
+
+    <id name="id" type="int" column="ID">
+      <meta attribute="scope-set">protected</meta>
+      <generator class="native"/>
+    </id>
+
+    <property name="title" type="string" not-null="true">
+      <!--meta attribute="finder-method">findByTitle</meta-->
+      <column name="title" index="VIDEO_TITLE"/>
+    </property>
+
+    <property name="description" type="string"/>
+    <property name="channel" type="string"/>
+    <property name="station" type="string"/>
+    <property name="rating" type="string"/>
+    <property name="dateRecorded" type="timestamp"/>
+    <property name="duration" type="int" not-null="true"/>
+    <property name="size" type="long" not-null="true"/>
+    <property name="status" type="int" not-null="true"/>
+    <property name="path" type="string" not-null="true" length="1024">
+      <column name="path" index="VIDEO_PATH"/>
+    </property>
+    <property name="url" type="string" length="1024"/>
+    <property name="icon" type="string"/>
+    <property name="choreographers" type="string"/>
+    <property name="colorCode" type="int" not-null="true"/>
+    <property name="directors" type="string"/>
+    <property name="episodeTitle" type="string"/>
+    <property name="episodeNumber" type="int" not-null="true"/>
+    <property name="execProducers" type="string"/>
+    <property name="programGenre" type="string"/>
+    <property name="guestStars" type="string"/>
+    <property name="actors" type="string" length="512"/>
+    <property name="hosts" type="string"/>
+    <property name="episodic" type="true_false"/>
+    <property name="originalAirDate" type="timestamp"/>
+    <property name="producers" type="string"/>
+    <property name="seriesGenre" type="string"/>
+    <property name="seriesTitle" type="string"/>
+    <property name="showType" type="string"/>
+    <property name="writers" type="string"/>
+    <property name="advisories" type="string"/>
+    <property name="channelMajorNumber" type="int" not-null="true"/>
+    <property name="channelMinorNumber" type="int" not-null="true"/>
+    <property name="callsign" type="string"/>
+    <property name="recordingQuality" type="string"/>
+    <property name="startTime" type="timestamp"/>
+    <property name="stopTime" type="timestamp"/>
+    <property name="expirationTime" type="timestamp"/>
+    <property name="dateModified" type="timestamp">
+      <meta attribute="field-description">When the video was modified</meta>
+    </property>
+    <property name="mimeType" type="string" not-null="true" length="50"/>
+    <property name="source" type="string"/>
+    <property name="bookmarks" type="string"/>
+    <property name="downloadTime" type="int" not-null="true">
+      <meta attribute="field-description">Download time in seconds</meta>
+    </property>
+    <property name="downloadSize" type="long" not-null="true">
+      <meta attribute="field-description">Download size in bytes</meta>
+    </property>
+    <property name="origen" type="string" length="30"/>
+
+    <property name="playCount" type="int"/>
+
+    <property name="tone" type="string">
+      <meta attribute="field-description">The mood of the track</meta>
+      <column name="tone" index="VIDEO_TONE" length="50"/>
+    </property>
+
+    <property name="videoResolution" type="string" length="20"/>
+
+    <property name="videoCodec" type="string" length="20"/>
+
+    <property name="videoRate" type="float"/>
+
+    <property name="videoBitRate" type="int"/>
+
+    <property name="audioCodec" type="string" length="20"/>
+
+    <property name="audioRate" type="float"/>
+
+    <property name="audioBitRate" type="int"/>
+
+    <property name="audioChannels" type="int"/>
+
+    <property name="color" type="string" length="20"/>
+
+    <property name="showTypeValue" type="int"/>
+
+    <property name="ratingValue" type="int"/>
+
+    <property name="recordingQualityValue" type="int"/>
+
+    <property name="partCount" type="int"/>
+
+    <property name="partIndex" type="int"/>
+
+    <property name="datePlayed" type="timestamp">
+      <meta attribute="field-description">When the track was last played</meta>
+    </property>
+
+    <property name="dateDownloaded" type="timestamp"/>
+
+    <property name="dateUploaded" type="timestamp"/>
+
+    <property name="uploaded" type="string"/>
+
+    <property name="availability" type="int"/>
+
+    <property name="parentalControls" type="boolean"/>    <property name="tivo" type="string"/>
+
+  </class>
+
+</hibernate-mapping>

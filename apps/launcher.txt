@@ -1,0 +1,33 @@
+###################################
+#
+# File: launcher.txt
+# 
+# Copyright 2004 TiVo, Inc.
+#
+# This file contains a list of application classes and arguments in
+# the following form:
+#
+# <class> <argument-list> 
+#
+####################################
+#com.tivo.hme.samples.animate.Animate
+#com.tivo.hme.samples.clock.Clock
+#com.tivo.hme.samples.fractal.Fractal
+#com.tivo.hme.samples.hello.HelloWorld
+#
+# This application requires a parameter to specify the pictures directory
+#
+#com.tivo.hme.samples.pictures.Pictures pictures
+#
+# This application requires a parameter to specify the music directory
+#
+#com.tivo.hme.samples.music.Music music
+#com.tivo.hme.samples.weather.Weather
+#com.tivo.hme.samples.skullbones.SkullBones
+#com.tivo.hme.samples.videobackground.VideoBackground
+#com.tivo.hme.samples.effects.Effects
+#com.tivo.hme.samples.tictactoe.TicTacToe
+#com.tivo.hme.samples.fontinfo.FontInfo
+#com.tivo.hme.samples.rss.RSS
+
+#com.tivo.hme.samples.bananas.BananasSample
